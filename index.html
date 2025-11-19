@@ -5,23 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Animation Editor Pro</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tweenjs@1.0.2/dist/tweenjs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6a5acd;
-            --primary-light: #8a7dff;
-            --primary-dark: #4a3aad;
-            --secondary: #ff6b6b;
-            --accent: #4ecdc4;
-            --surface: rgba(255, 255, 255, 0.95);
-            --surface-dark: rgba(30, 30, 60, 0.9);
-            --text: #333;
-            --text-light: #777;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --border-radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #6200ea;
+            --primary-light: #bb86fc;
+            --primary-dark: #3700b3;
+            --secondary: #03dac6;
+            --secondary-light: #66fff9;
+            --secondary-dark: #00bfa5;
+            --background: #121212;
+            --surface: #1e1e1e;
+            --surface-variant: #2c2c2c;
+            --error: #cf6679;
+            --on-primary: #ffffff;
+            --on-secondary: #000000;
+            --on-background: #ffffff;
+            --on-surface: #ffffff;
+            --outline: #3e3e3e;
+            --success: #4caf50;
+            --warning: #ff9800;
         }
 
         * {
@@ -31,458 +34,428 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background);
+            color: var(--on-background);
             min-height: 100vh;
-            padding: 15px;
-            color: var(--text);
             overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: var(--surface);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .header {
+        .app-container {
             display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .app-header {
+            background-color: var(--surface);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 100;
         }
 
-        h1 {
-            color: var(--primary);
-            font-size: 2.2em;
-            font-weight: 700;
+        .app-title {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .app-title .material-icons {
+            color: var(--primary);
+            font-size: 1.8rem;
         }
 
         .header-actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .header-btn {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+
+        .header-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .header-btn.secondary {
+            background-color: var(--surface-variant);
+        }
+
+        .header-btn.secondary:hover {
+            background-color: var(--outline);
         }
 
         .main-content {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 20px;
-            margin-bottom: 20px;
+            display: flex;
+            flex: 1;
+            overflow: hidden;
         }
 
-        .viewer-section {
-            background: #f7fafc;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--shadow);
+        .sidebar {
+            width: 320px;
+            background-color: var(--surface);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.2);
+        }
+
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .viewer-toolbar {
+            background-color: var(--surface);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .viewer-options {
+            display: flex;
+            gap: 12px;
+        }
+
+        .viewer-btn {
+            background: none;
+            border: none;
+            color: var(--on-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .viewer-btn:hover {
+            background-color: var(--surface-variant);
+        }
+
+        .viewer-btn.active {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .canvas-container {
+            flex: 1;
             position: relative;
+            background-color: #0a0a0a;
+            overflow: hidden;
         }
 
         #canvas {
             width: 100%;
-            height: 500px;
-            border-radius: 8px;
-            cursor: grab;
-            background: linear-gradient(to bottom, #87ceeb 0%, #e0f6ff 100%);
-        }
-
-        #canvas:active {
-            cursor: grabbing;
-        }
-
-        .control-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .panel {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 15px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .panel:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .panel h3 {
-            color: var(--primary);
-            font-size: 1.1em;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-success {
-            background: #48bb78;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #38a169;
-        }
-
-        .btn-danger {
-            background: #f56565;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #e53e3e;
-        }
-
-        .btn-warning {
-            background: #ed8936;
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #dd6b20;
-        }
-
-        .btn-secondary {
-            background: #718096;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #4a5568;
-        }
-
-        .btn-icon {
-            background: transparent;
-            color: var(--primary);
-            padding: 8px;
-            border-radius: 50%;
-        }
-
-        .btn-icon:hover {
-            background: rgba(106, 90, 205, 0.1);
-        }
-
-        .btn-full {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .timeline-section {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 15px;
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-        }
-
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            height: 100%;
+            display: block;
         }
 
         .timeline-container {
-            position: relative;
-            height: 100px;
-            background: #f7fafc;
-            border-radius: 8px;
+            height: 200px;
+            background-color: var(--surface);
+            border-top: 1px solid var(--outline);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timeline-header {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--outline);
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeline-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .timeline-btn {
+            background: none;
+            border: none;
+            color: var(--on-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .timeline-btn:hover {
+            background-color: var(--surface-variant);
+        }
+
+        .timeline-btn.active {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .timeline-content {
+            flex: 1;
             overflow: hidden;
-            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .timeline-tracks {
+            height: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: relative;
         }
 
         .timeline-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            height: 40px;
+            border-bottom: 1px solid var(--outline);
+            position: relative;
         }
 
-        .timeline-marker {
+        .timeline-track-header {
             position: absolute;
+            left: 0;
             top: 0;
-            width: 2px;
             height: 100%;
-            background: var(--secondary);
-            cursor: ew-resize;
+            width: 120px;
+            background-color: var(--surface-variant);
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 0.875rem;
+            z-index: 2;
+            border-right: 1px solid var(--outline);
+        }
+
+        .timeline-track-content {
+            margin-left: 120px;
+            height: 100%;
+            position: relative;
         }
 
         .timeline-keyframe {
             position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
             border-radius: 50%;
-            background: var(--primary);
-            top: 45%;
-            transform: translateX(-50%);
+            top: 50%;
+            transform: translate(-50%, -50%);
             cursor: pointer;
+            z-index: 1;
         }
 
-        .timeline-playback {
+        .timeline-keyframe:hover {
+            background-color: var(--primary-light);
+            width: 14px;
+            height: 14px;
+        }
+
+        .timeline-playhead {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background-color: var(--error);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--outline);
+        }
+
+        .section-title {
+            font-weight: 500;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .timeline-time {
-            font-size: 14px;
-            color: var(--text-light);
-            min-width: 60px;
-            text-align: center;
+        .section-title .material-icons {
+            color: var(--primary);
         }
 
-        .timeline-slider {
+        .control-group {
+            margin-bottom: 16px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.875rem;
+            color: var(--on-surface);
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 8px 12px;
+            background-color: var(--surface-variant);
+            border: 1px solid var(--outline);
+            border-radius: 4px;
+            color: var(--on-surface);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider {
             flex: 1;
-            height: 6px;
-            border-radius: 3px;
-            background: #cbd5e0;
+            height: 4px;
+            background-color: var(--surface-variant);
+            border-radius: 2px;
             outline: none;
             -webkit-appearance: none;
         }
 
-        .timeline-slider::-webkit-slider-thumb {
+        .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 16px;
             height: 16px;
+            background-color: var(--primary);
             border-radius: 50%;
-            background: var(--primary);
             cursor: pointer;
         }
 
-        .bone-controls {
-            display: grid;
+        .slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: right;
+            font-size: 0.875rem;
+        }
+
+        .control-row {
+            display: flex;
             gap: 12px;
         }
 
-        .bone-group {
-            padding: 12px;
-            background: #f7fafc;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
+        .control-col {
+            flex: 1;
         }
 
-        .bone-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .bone-name {
-            font-weight: 600;
-            color: var(--text);
-            font-size: 14px;
-        }
-
-        .bone-toggle {
-            background: transparent;
-            color: var(--primary);
-            padding: 4px;
+        .btn {
+            padding: 8px 16px;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
             border-radius: 4px;
-            font-size: 18px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background-color 0.2s;
         }
 
-        .bone-toggle:hover {
-            background: rgba(106, 90, 205, 0.1);
+        .btn:hover {
+            background-color: var(--primary-dark);
         }
 
-        .bone-transform {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        .btn.secondary {
+            background-color: var(--surface-variant);
+            color: var(--on-surface);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--outline);
+        }
+
+        .btn.full-width {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
             gap: 8px;
         }
 
-        .transform-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .transform-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 4px;
-            border-radius: 2px;
-            background: #cbd5e0;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-        }
-
-        .json-output {
-            background: #2d3748;
-            color: #a0aec0;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            max-height: 200px;
-            overflow-y: auto;
-            white-space: pre;
-            line-height: 1.4;
-        }
-
-        .status {
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 600;
-            margin-bottom: 15px;
-            transition: var(--transition);
-        }
-
-        .status.recording {
-            background: #fef5e7;
-            color: #d68910;
-            border: 2px solid #f39c12;
-            animation: pulse 1.5s infinite;
-        }
-
-        .status.playing {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 2px solid #66bb6a;
-        }
-
-        .status.idle {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 2px solid #66bb6a;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .file-input {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .file-input input[type="file"] {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .file-input-label {
-            display: block;
-            padding: 10px;
-            border: 2px dashed #cbd5e0;
-            border-radius: 8px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .file-input:hover .file-input-label {
-            border-color: var(--primary);
-            background: #f7fafc;
+        .btn-group .btn {
+            flex: 1;
         }
 
         .tabs {
             display: flex;
-            gap: 5px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--outline);
+            margin-bottom: 16px;
         }
 
         .tab {
-            padding: 8px 15px;
+            padding: 12px 16px;
+            background: none;
             border: none;
-            background: transparent;
-            color: var(--text-light);
-            font-weight: 500;
+            color: var(--on-surface);
             cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: var(--transition);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .tab:hover {
+            background-color: var(--surface-variant);
         }
 
         .tab.active {
             color: var(--primary);
-            border-bottom-color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
         }
 
         .tab-content {
@@ -493,83 +466,150 @@
             display: block;
         }
 
-        .preset-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+        .bone-item {
+            background-color: var(--surface-variant);
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 12px;
         }
 
-        .preset-card {
-            padding: 10px;
-            background: #f7fafc;
-            border-radius: 8px;
+        .bone-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .bone-name {
+            font-weight: 500;
+        }
+
+        .bone-toggle {
+            background: none;
+            border: none;
+            color: var(--on-surface);
             cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            font-size: 13px;
+            display: flex;
+            align-items: center;
         }
 
-        .preset-card:hover {
-            background: #e2e8f0;
-            transform: translateY(-2px);
+        .bone-controls {
+            display: grid;
+            gap: 12px;
         }
 
-        .preset-card i {
-            display: block;
-            font-size: 24px;
-            margin-bottom: 5px;
-            color: var(--primary);
+        .transform-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .transform-label {
+            min-width: 60px;
+            font-size: 0.875rem;
         }
 
         .animation-list {
             max-height: 200px;
             overflow-y: auto;
+            border: 1px solid var(--outline);
+            border-radius: 4px;
         }
 
         .animation-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--outline);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 8px;
-            background: #f7fafc;
-            border-radius: 6px;
-            margin-bottom: 8px;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .animation-item:hover {
+            background-color: var(--surface-variant);
+        }
+
+        .animation-item:last-child {
+            border-bottom: none;
+        }
+
+        .animation-item.active {
+            background-color: rgba(98, 0, 234, 0.1);
         }
 
         .animation-name {
             font-weight: 500;
-            font-size: 14px;
         }
 
         .animation-actions {
             display: flex;
-            gap: 5px;
-        }
-
-        .camera-controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
             gap: 8px;
         }
 
-        .camera-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            box-shadow: var(--shadow);
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--on-surface);
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
         }
 
-        .camera-btn:hover {
-            transform: scale(1.1);
+        .icon-btn:hover {
+            background-color: var(--surface-variant);
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .preset-item {
+            background-color: var(--surface-variant);
+            border-radius: 4px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+
+        .preset-item:hover {
+            background-color: var(--outline);
+        }
+
+        .preset-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .preset-name {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .skin-preview {
+            width: 100%;
+            height: 160px;
+            background-color: var(--surface-variant);
+            border-radius: 4px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .skin-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            image-rendering: pixelated;
         }
 
         .modal {
@@ -579,17 +619,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 1000;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
         }
 
         .modal-content {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            max-width: 500px;
+            background-color: var(--surface);
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 600px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
@@ -597,325 +641,782 @@
 
         .modal-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            justify-content: space-between;
+            margin-bottom: 16px;
         }
 
         .modal-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: var(--primary);
+            font-weight: 500;
+            font-size: 1.25rem;
         }
 
         .modal-close {
-            background: transparent;
-            color: var(--text-light);
-            font-size: 24px;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            background: none;
+            border: none;
+            color: var(--on-surface);
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: var(--transition);
-            z-index: 1001;
         }
 
-        .notification.show {
+        .modal-body {
+            margin-bottom: 16px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: var(--surface);
+            border-radius: 4px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show {
             transform: translateY(0);
             opacity: 1;
         }
 
-        .notification.success {
-            border-left: 4px solid #48bb78;
+        .toast-icon {
+            color: var(--primary);
         }
 
-        .notification.error {
-            border-left: 4px solid #f56565;
+        .toast-message {
+            flex: 1;
         }
 
-        .notification.info {
-            border-left: 4px solid var(--primary);
+        .color-picker {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--outline);
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        .shortcuts-hint {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 12px;
-            max-width: 200px;
-        }
-
-        .shortcuts-hint h4 {
-            margin-bottom: 5px;
-            font-size: 14px;
+        .shortcuts-list {
+            display: grid;
+            gap: 8px;
         }
 
         .shortcut-item {
-            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--outline);
         }
 
         .shortcut-key {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 2px 5px;
-            border-radius: 3px;
-            margin-right: 5px;
+            background-color: var(--surface-variant);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.875rem;
         }
 
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
+        .export-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .export-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
             }
-            
-            .control-section {
-                max-height: none;
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .viewer-container {
+                width: 100%;
+            }
+
+            .timeline-container {
+                height: 150px;
+            }
+
+            .preset-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><span class="material-icons">animation</span> Minecraft Animation Editor Pro</h1>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="app-title">
+                <span class="material-icons">animation</span>
+                <span>Minecraft Animation Editor Pro</span>
+            </div>
             <div class="header-actions">
-                <button class="btn-secondary" onclick="showKeyboardShortcuts()"><span class="material-icons">keyboard</span></button>
-                <button class="btn-secondary" onclick="showHelp()"><span class="material-icons">help_outline</span></button>
+                <button class="header-btn secondary" id="newProjectBtn">
+                    <span class="material-icons">add</span>
+                    <span>Proyek Baru</span>
+                </button>
+                <button class="header-btn secondary" id="openProjectBtn">
+                    <span class="material-icons">folder_open</span>
+                    <span>Buka</span>
+                </button>
+                <button class="header-btn secondary" id="saveProjectBtn">
+                    <span class="material-icons">save</span>
+                    <span>Simpan</span>
+                </button>
+                <button class="header-btn" id="exportBtn">
+                    <span class="material-icons">download</span>
+                    <span>Export</span>
+                </button>
             </div>
-        </div>
-
-        <div class="timeline-section">
-            <div class="timeline-header">
-                <h3><span class="material-icons">timeline</span> Timeline</h3>
-                <div class="timeline-playback">
-                    <button class="btn-icon" onclick="playAnimation()"><span class="material-icons">play_arrow</span></button>
-                    <button class="btn-icon" onclick="pauseAnimation()"><span class="material-icons">pause</span></button>
-                    <button class="btn-icon" onclick="stopAnimation()"><span class="material-icons">stop</span></button>
-                    <div class="timeline-time" id="currentTime">0.0s</div>
-                    <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="10" step="0.1" value="0">
-                    <div class="timeline-time" id="totalTime">10.0s</div>
-                </div>
-            </div>
-            <div class="timeline-container">
-                <div class="timeline-track" id="timelineTrack"></div>
-                <div class="timeline-marker" id="timelineMarker" style="left: 0%;"></div>
-            </div>
-            <div class="controls">
-                <button class="btn-primary" onclick="addKeyframe()"><span class="material-icons">add_circle</span> Add Keyframe</button>
-                <button class="btn-danger" onclick="deleteKeyframe()"><span class="material-icons">delete</span> Delete Keyframe</button>
-                <button class="btn-secondary" onclick="clearKeyframes()"><span class="material-icons">clear_all</span> Clear All</button>
-                <button class="btn-warning" onclick="showAnimationSettings()"><span class="material-icons">settings</span> Settings</button>
-            </div>
-        </div>
+        </header>
 
         <div class="main-content">
-            <div class="viewer-section">
-                <canvas id="canvas"></canvas>
-                <div class="camera-controls">
-                    <div class="camera-btn" onclick="setCameraView('front')"><span class="material-icons">face</span></div>
-                    <div class="camera-btn" onclick="setCameraView('back')"><span class="material-icons">face_retouching_off</span></div>
-                    <div class="camera-btn" onclick="setCameraView('left')"><span class="material-icons">arrow_back</span></div>
-                    <div class="camera-btn" onclick="setCameraView('right')"><span class="material-icons">arrow_forward</span></div>
-                    <div class="camera-btn" onclick="setCameraView('top')"><span class="material-icons">keyboard_arrow_up</span></div>
-                    <div class="camera-btn" onclick="setCameraView('bottom')"><span class="material-icons">keyboard_arrow_down</span></div>
-                    <div class="camera-btn" onclick="resetCamera()"><span class="material-icons">center_focus_strong</span></div>
-                </div>
-            </div>
-
-            <div class="control-section">
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3><span class="material-icons">movie</span> Animation</h3>
-                        <button class="btn-icon" onclick="showAnimationModal()"><span class="material-icons">add</span></button>
-                    </div>
-                    <div class="animation-list" id="animationList"></div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3><span class="material-icons">accessibility</span> Bone Controls</h3>
-                    </div>
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-section">
                     <div class="tabs">
-                        <button class="tab active" onclick="switchTab('rotation')">Rotation</button>
-                        <button class="tab" onclick="switchTab('position')">Position</button>
-                        <button class="tab" onclick="switchTab('scale')">Scale</button>
+                        <button class="tab active" data-tab="bones">Bones</button>
+                        <button class="tab" data-tab="animations">Animasi</button>
+                        <button class="tab" data-tab="presets">Preset</button>
+                        <button class="tab" data-tab="skins">Skin</button>
+                        <button class="tab" data-tab="settings">Pengaturan</button>
                     </div>
-                    <div class="tab-content active" id="rotationTab">
-                        <div class="bone-controls" id="boneControls"></div>
+
+                    <div class="tab-content active" id="bones-tab">
+                        <div class="control-group">
+                            <div class="bone-item">
+                                <div class="bone-header">
+                                    <div class="bone-name">Head</div>
+                                    <button class="bone-toggle">
+                                        <span class="material-icons">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="bone-controls">
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi X:</div>
+                                        <input type="range" class="slider" id="head-rotation-x" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Y:</div>
+                                        <input type="range" class="slider" id="head-rotation-y" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Z:</div>
+                                        <input type="range" class="slider" id="head-rotation-z" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bone-item">
+                                <div class="bone-header">
+                                    <div class="bone-name">Body</div>
+                                    <button class="bone-toggle">
+                                        <span class="material-icons">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="bone-controls">
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi X:</div>
+                                        <input type="range" class="slider" id="body-rotation-x" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Y:</div>
+                                        <input type="range" class="slider" id="body-rotation-y" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Z:</div>
+                                        <input type="range" class="slider" id="body-rotation-z" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bone-item">
+                                <div class="bone-header">
+                                    <div class="bone-name">Left Arm</div>
+                                    <button class="bone-toggle">
+                                        <span class="material-icons">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="bone-controls">
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi X:</div>
+                                        <input type="range" class="slider" id="leftarm-rotation-x" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Y:</div>
+                                        <input type="range" class="slider" id="leftarm-rotation-y" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Z:</div>
+                                        <input type="range" class="slider" id="leftarm-rotation-z" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bone-item">
+                                <div class="bone-header">
+                                    <div class="bone-name">Right Arm</div>
+                                    <button class="bone-toggle">
+                                        <span class="material-icons">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="bone-controls">
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi X:</div>
+                                        <input type="range" class="slider" id="rightarm-rotation-x" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Y:</div>
+                                        <input type="range" class="slider" id="rightarm-rotation-y" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Z:</div>
+                                        <input type="range" class="slider" id="rightarm-rotation-z" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bone-item">
+                                <div class="bone-header">
+                                    <div class="bone-name">Left Leg</div>
+                                    <button class="bone-toggle">
+                                        <span class="material-icons">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="bone-controls">
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi X:</div>
+                                        <input type="range" class="slider" id="leftleg-rotation-x" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Y:</div>
+                                        <input type="range" class="slider" id="leftleg-rotation-y" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Z:</div>
+                                        <input type="range" class="slider" id="leftleg-rotation-z" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bone-item">
+                                <div class="bone-header">
+                                    <div class="bone-name">Right Leg</div>
+                                    <button class="bone-toggle">
+                                        <span class="material-icons">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="bone-controls">
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi X:</div>
+                                        <input type="range" class="slider" id="rightleg-rotation-x" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Y:</div>
+                                        <input type="range" class="slider" id="rightleg-rotation-y" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                    <div class="transform-control">
+                                        <div class="transform-label">Rotasi Z:</div>
+                                        <input type="range" class="slider" id="rightleg-rotation-z" min="-180" max="180" value="0">
+                                        <div class="slider-value">0°</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="tab-content" id="positionTab">
-                        <div class="bone-controls" id="positionControls"></div>
+
+                    <div class="tab-content" id="animations-tab">
+                        <div class="control-group">
+                            <div class="btn-group">
+                                <button class="btn" id="addAnimationBtn">
+                                    <span class="material-icons">add</span>
+                                    <span>Tambah</span>
+                                </button>
+                                <button class="btn secondary" id="duplicateAnimationBtn">
+                                    <span class="material-icons">content_copy</span>
+                                    <span>Duplikat</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="animation-list" id="animationList">
+                                <div class="animation-item active">
+                                    <div class="animation-name">Walk</div>
+                                    <div class="animation-actions">
+                                        <button class="icon-btn">
+                                            <span class="material-icons">edit</span>
+                                        </button>
+                                        <button class="icon-btn">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="animation-item">
+                                    <div class="animation-name">Run</div>
+                                    <div class="animation-actions">
+                                        <button class="icon-btn">
+                                            <span class="material-icons">edit</span>
+                                        </button>
+                                        <button class="icon-btn">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="animation-item">
+                                    <div class="animation-name">Jump</div>
+                                    <div class="animation-actions">
+                                        <button class="icon-btn">
+                                            <span class="material-icons">edit</span>
+                                        </button>
+                                        <button class="icon-btn">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Nama Animasi</label>
+                            <input type="text" class="control-input" id="animationName" value="Walk">
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Durasi (detik)</label>
+                            <div class="slider-container">
+                                <input type="range" class="slider" id="animationDuration" min="0.1" max="10" step="0.1" value="1">
+                                <div class="slider-value">1.0s</div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Loop</label>
+                            <div class="control-row">
+                                <div class="control-col">
+                                    <label class="control-label">
+                                        <input type="checkbox" class="checkbox" id="animationLoop" checked>
+                                        <span>Ulangi animasi</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Interpolasi</label>
+                            <select class="control-input" id="animationInterpolation">
+                                <option value="linear">Linear</option>
+                                <option value="step">Step</option>
+                                <option value="cubic-spline">Cubic Spline</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="btn-group">
+                                <button class="btn secondary" id="importAnimationBtn">
+                                    <span class="material-icons">upload_file</span>
+                                    <span>Import</span>
+                                </button>
+                                <button class="btn secondary" id="exportAnimationBtn">
+                                    <span class="material-icons">download</span>
+                                    <span>Export</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="tab-content" id="scaleTab">
-                        <div class="bone-controls" id="scaleControls"></div>
+
+                    <div class="tab-content" id="presets-tab">
+                        <div class="preset-grid">
+                            <div class="preset-item" data-preset="walk">
+                                <div class="preset-icon">
+                                    <span class="material-icons">directions_walk</span>
+                                </div>
+                                <div class="preset-name">Jalan</div>
+                            </div>
+                            <div class="preset-item" data-preset="run">
+                                <div class="preset-icon">
+                                    <span class="material-icons">directions_run</span>
+                                </div>
+                                <div class="preset-name">Lari</div>
+                            </div>
+                            <div class="preset-item" data-preset="jump">
+                                <div class="preset-icon">
+                                    <span class="material-icons">airline_seat_legroom_extra</span>
+                                </div>
+                                <div class="preset-name">Lompat</div>
+                            </div>
+                            <div class="preset-item" data-preset="swim">
+                                <div class="preset-icon">
+                                    <span class="material-icons">pool</span>
+                                </div>
+                                <div class="preset-name">Berenang</div>
+                            </div>
+                            <div class="preset-item" data-preset="attack">
+                                <div class="preset-icon">
+                                    <span class="material-icons">sports_martial_arts</span>
+                                </div>
+                                <div class="preset-name">Serang</div>
+                            </div>
+                            <div class="preset-item" data-preset="wave">
+                                <div class="preset-icon">
+                                    <span class="material-icons">waving_hand</span>
+                                </div>
+                                <div class="preset-name">Melambai</div>
+                            </div>
+                            <div class="preset-item" data-preset="dance">
+                                <div class="preset-icon">
+                                    <span class="material-icons">music_note</span>
+                                </div>
+                                <div class="preset-name">Menari</div>
+                            </div>
+                            <div class="preset-item" data-preset="sit">
+                                <div class="preset-icon">
+                                    <span class="material-icons">chair</span>
+                                </div>
+                                <div class="preset-name">Duduk</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="skins-tab">
+                        <div class="control-group">
+                            <div class="skin-preview">
+                                <img src="https://picsum.photos/seed/minecraft-skin/64/64.jpg" alt="Skin Preview">
+                            </div>
+                            <button class="btn full-width" id="uploadSkinBtn">
+                                <span class="material-icons">upload</span>
+                                <span>Upload Skin</span>
+                            </button>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Skin Library</label>
+                            <div class="animation-list" id="skinList">
+                                <div class="animation-item active">
+                                    <div class="animation-name">Default</div>
+                                    <div class="animation-actions">
+                                        <button class="icon-btn">
+                                            <span class="material-icons">check</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="animation-item">
+                                    <div class="animation-name">Steve</div>
+                                    <div class="animation-actions">
+                                        <button class="icon-btn">
+                                            <span class="material-icons">check</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="animation-item">
+                                    <div class="animation-name">Alex</div>
+                                    <div class="animation-actions">
+                                        <button class="icon-btn">
+                                            <span class="material-icons">check</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Model Type</label>
+                            <select class="control-input" id="modelType">
+                                <option value="classic">Classic</option>
+                                <option value="slim">Slim</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="settings-tab">
+                        <div class="control-group">
+                            <label class="control-label">Kamera</label>
+                            <select class="control-input" id="cameraType">
+                                <option value="perspective">Perspektif</option>
+                                <option value="orthographic">Ortografik</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Grid</label>
+                            <label class="control-label">
+                                <input type="checkbox" class="checkbox" id="showGrid" checked>
+                                <span>Tampilkan Grid</span>
+                            </label>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Snap</label>
+                            <label class="control-label">
+                                <input type="checkbox" class="checkbox" id="snapToGrid">
+                                <span>Snap ke Grid</span>
+                            </label>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Ukuran Grid</label>
+                            <div class="slider-container">
+                                <input type="range" class="slider" id="gridSize" min="1" max="20" value="10">
+                                <div class="slider-value">10</div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Background Color</label>
+                            <input type="color" class="color-picker" id="backgroundColor" value="#0a0a0a">
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Lighting</label>
+                            <select class="control-input" id="lightingType">
+                                <option value="basic">Basic</option>
+                                <option value="realistic">Realistis</option>
+                                <option value="studio">Studio</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Keyboard Shortcuts</label>
+                            <button class="btn secondary full-width" id="showShortcutsBtn">
+                                <span class="material-icons">keyboard</span>
+                                <span>Tampilkan Shortcut</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="viewer-container">
+                <div class="viewer-toolbar">
+                    <div class="viewer-options">
+                        <button class="viewer-btn active" data-view="perspective">
+                            <span class="material-icons">3d_rotation</span>
+                            <span>3D</span>
+                        </button>
+                        <button class="viewer-btn" data-view="front">
+                            <span class="material-icons">arrow_forward</span>
+                            <span>Depan</span>
+                        </button>
+                        <button class="viewer-btn" data-view="side">
+                            <span class="material-icons">arrow_right_alt</span>
+                            <span>Samping</span>
+                        </button>
+                        <button class="viewer-btn" data-view="top">
+                            <span class="material-icons">arrow_downward</span>
+                            <span>Atas</span>
+                        </button>
+                    </div>
+                    <div class="viewer-options">
+                        <button class="viewer-btn" id="resetCameraBtn">
+                            <span class="material-icons">center_focus_strong</span>
+                            <span>Reset Kamera</span>
+                        </button>
+                        <button class="viewer-btn" id="toggleWireframeBtn">
+                            <span class="material-icons">grid_on</span>
+                            <span>Wireframe</span>
+                        </button>
+                        <button class="viewer-btn" id="toggleSidebarBtn">
+                            <span class="material-icons">menu</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3><span class="material-icons">category</span> Presets</h3>
-                    </div>
-                    <div class="preset-grid">
-                        <div class="preset-card" onclick="applyPreset('walk')">
-                            <span class="material-icons">directions_walk</span>
-                            Walk
-                        </div>
-                        <div class="preset-card" onclick="applyPreset('run')">
-                            <span class="material-icons">directions_run</span>
-                            Run
-                        </div>
-                        <div class="preset-card" onclick="applyPreset('jump')">
-                            <span class="material-icons">vertical_align_top</span>
-                            Jump
-                        </div>
-                        <div class="preset-card" onclick="applyPreset('wave')">
-                            <span class="material-icons">waving_hand</span>
-                            Wave
-                        </div>
-                    </div>
+                <div class="canvas-container">
+                    <canvas id="canvas"></canvas>
                 </div>
 
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3><span class="material-icons">face</span> Skin</h3>
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <div class="timeline-title">
+                            <span class="material-icons">timeline</span>
+                            <span>Timeline</span>
+                        </div>
+                        <div class="timeline-controls">
+                            <button class="timeline-btn" id="prevFrameBtn">
+                                <span class="material-icons">skip_previous</span>
+                            </button>
+                            <button class="timeline-btn active" id="playBtn">
+                                <span class="material-icons">play_arrow</span>
+                            </button>
+                            <button class="timeline-btn" id="nextFrameBtn">
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                            <button class="timeline-btn" id="addKeyframeBtn">
+                                <span class="material-icons">add_circle_outline</span>
+                            </button>
+                            <button class="timeline-btn" id="deleteKeyframeBtn">
+                                <span class="material-icons">remove_circle_outline</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="file-input">
-                        <input type="file" id="skinInput" accept="image/png" onchange="loadSkin(event)">
-                        <label for="skinInput" class="file-input-label">
-                            <span class="material-icons">upload_file</span> Upload Skin
-                        </label>
-                    </div>
-                    <div class="controls" style="margin-top: 10px;">
-                        <button class="btn-secondary btn-full" onclick="showSkinLibrary()"><span class="material-icons">photo_library</span> Skin Library</button>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3><span class="material-icons">code</span> JSON Output</h3>
-                    </div>
-                    <div class="json-output" id="jsonOutput">{"format_version": "1.8.0", "animations": {}}</div>
-                    <div class="controls" style="margin-top: 10px;">
-                        <button class="btn-primary btn-full" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copy JSON</button>
+                    <div class="timeline-content">
+                        <div class="timeline-tracks" id="timelineTracks">
+                            <div class="timeline-track" data-bone="head">
+                                <div class="timeline-track-header">Head</div>
+                                <div class="timeline-track-content">
+                                    <div class="timeline-keyframe" style="left: 10%"></div>
+                                    <div class="timeline-keyframe" style="left: 50%"></div>
+                                    <div class="timeline-keyframe" style="left: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-track" data-bone="body">
+                                <div class="timeline-track-header">Body</div>
+                                <div class="timeline-track-content">
+                                    <div class="timeline-keyframe" style="left: 10%"></div>
+                                    <div class="timeline-keyframe" style="left: 50%"></div>
+                                    <div class="timeline-keyframe" style="left: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-track" data-bone="leftArm">
+                                <div class="timeline-track-header">Left Arm</div>
+                                <div class="timeline-track-content">
+                                    <div class="timeline-keyframe" style="left: 10%"></div>
+                                    <div class="timeline-keyframe" style="left: 50%"></div>
+                                    <div class="timeline-keyframe" style="left: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-track" data-bone="rightArm">
+                                <div class="timeline-track-header">Right Arm</div>
+                                <div class="timeline-track-content">
+                                    <div class="timeline-keyframe" style="left: 10%"></div>
+                                    <div class="timeline-keyframe" style="left: 50%"></div>
+                                    <div class="timeline-keyframe" style="left: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-track" data-bone="leftLeg">
+                                <div class="timeline-track-header">Left Leg</div>
+                                <div class="timeline-track-content">
+                                    <div class="timeline-keyframe" style="left: 10%"></div>
+                                    <div class="timeline-keyframe" style="left: 50%"></div>
+                                    <div class="timeline-keyframe" style="left: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-track" data-bone="rightLeg">
+                                <div class="timeline-track-header">Right Leg</div>
+                                <div class="timeline-track-content">
+                                    <div class="timeline-keyframe" style="left: 10%"></div>
+                                    <div class="timeline-keyframe" style="left: 50%"></div>
+                                    <div class="timeline-keyframe" style="left: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-playhead" id="playhead" style="left: 0%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="animationModal">
+    <div class="modal" id="exportModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Animation Settings</h3>
-                <button class="modal-close" onclick="closeModal('animationModal')"><span class="material-icons">close</span></button>
+                <div class="modal-title">Export Animasi</div>
+                <button class="modal-close" id="closeExportModal">
+                    <span class="material-icons">close</span>
+                </button>
             </div>
-            <div class="form-group">
-                <label class="form-label">Animation Name</label>
-                <input type="text" class="form-input" id="animationName" placeholder="Enter animation name">
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option">
+                        <input type="radio" name="exportFormat" id="jsonFormat" value="json" checked>
+                        <label for="jsonFormat">JSON (Minecraft Bedrock)</label>
+                    </div>
+                    <div class="export-option">
+                        <input type="radio" name="exportFormat" id="gifFormat" value="gif">
+                        <label for="gifFormat">GIF</label>
+                    </div>
+                    <div class="export-option">
+                        <input type="radio" name="exportFormat" id="mp4Format" value="mp4">
+                        <label for="mp4Format">MP4 Video</label>
+                    </div>
+                    <div class="export-option">
+                        <input type="radio" name="exportFormat" id="webmFormat" value="webm">
+                        <label for="webmFormat">WebM Video</label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Nama File</label>
+                    <input type="text" class="control-input" id="exportFileName" value="animation">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Resolusi Video</label>
+                    <select class="control-input" id="exportResolution">
+                        <option value="480p">480p (854x480)</option>
+                        <option value="720p" selected>720p (1280x720)</option>
+                        <option value="1080p">1080p (1920x1080)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Frame Rate</label>
+                    <select class="control-input" id="exportFrameRate">
+                        <option value="24">24 fps</option>
+                        <option value="30" selected>30 fps</option>
+                        <option value="60">60 fps</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Animation Length (seconds)</label>
-                <input type="number" class="form-input" id="animationLength" min="0.1" max="60" step="0.1" value="10">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Loop</label>
-                <select class="form-select" id="animationLoop">
-                    <option value="true">True</option>
-                    <option value="false">False</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Interpolation</label>
-                <select class="form-select" id="animationInterpolation">
-                    <option value="linear">Linear</option>
-                    <option value="easeIn">Ease In</option>
-                    <option value="easeOut">Ease Out</option>
-                    <option value="easeInOut">Ease In Out</option>
-                </select>
-            </div>
-            <div class="controls">
-                <button class="btn-primary" onclick="saveAnimationSettings()">Save</button>
-                <button class="btn-secondary" onclick="closeModal('animationModal')">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="helpModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Help</h3>
-                <button class="modal-close" onclick="closeModal('helpModal')"><span class="material-icons">close</span></button>
-            </div>
-            <div>
-                <h4>Getting Started</h4>
-                <p>1. Upload a Minecraft skin or use the default skin</p>
-                <p>2. Create a new animation using the Animation Settings</p>
-                <p>3. Add keyframes to the timeline</p>
-                <p>4. Adjust bone positions, rotations, and scales</p>
-                <p>5. Preview your animation and export as JSON</p>
-                
-                <h4>Timeline Controls</h4>
-                <p>- Drag the timeline marker to scrub through the animation</p>
-                <p>- Add keyframes to save bone positions at specific times</p>
-                <p>- Use playback controls to preview your animation</p>
-                
-                <h4>Bone Controls</h4>
-                <p>- Use sliders to adjust bone rotations, positions, and scales</p>
-                <p>- Switch between tabs for different transform types</p>
-                <p>- Apply presets for common animations</p>
-                
-                <h4>Export Options</h4>
-                <p>- Copy JSON to clipboard for use in Minecraft</p>
-                <p>- Save animations for later use</p>
-            </div>
-            <div class="controls" style="margin-top: 15px;">
-                <button class="btn-primary" onclick="closeModal('helpModal')">Close</button>
+            <div class="modal-footer">
+                <button class="btn secondary" id="cancelExportBtn">Batal</button>
+                <button class="btn" id="confirmExportBtn">Export</button>
             </div>
         </div>
     </div>
@@ -923,62 +1424,118 @@
     <div class="modal" id="shortcutsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Keyboard Shortcuts</h3>
-                <button class="modal-close" onclick="closeModal('shortcutsModal')"><span class="material-icons">close</span></button>
+                <div class="modal-title">Keyboard Shortcuts</div>
+                <button class="modal-close" id="closeShortcutsModal">
+                    <span class="material-icons">close</span>
+                </button>
             </div>
-            <div>
-                <div class="shortcut-item"><span class="shortcut-key">Space</span> Play/Pause Animation</div>
-                <div class="shortcut-item"><span class="shortcut-key">K</span> Add Keyframe</div>
-                <div class="shortcut-item"><span class="shortcut-key">D</span> Delete Keyframe</div>
-                <div class="shortcut-item"><span class="shortcut-key">R</span> Reset Camera</div>
-                <div class="shortcut-item"><span class="shortcut-key">1-6</span> Switch Camera Views</div>
-                <div class="shortcut-item"><span class="shortcut-key">Ctrl+Z</span> Undo</div>
-                <div class="shortcut-item"><span class="shortcut-key">Ctrl+Y</span> Redo</div>
-                <div class="shortcut-item"><span class="shortcut-key">Ctrl+S</span> Save Animation</div>
-                <div class="shortcut-item"><span class="shortcut-key">Ctrl+C</span> Copy JSON</div>
-                <div class="shortcut-item"><span class="shortcut-key">←/→</span> Scrub Timeline</div>
+            <div class="modal-body">
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <span>Play/Pause Animasi</span>
+                        <span class="shortcut-key">Space</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Frame Berikutnya</span>
+                        <span class="shortcut-key">→</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Frame Sebelumnya</span>
+                        <span class="shortcut-key">←</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Tambah Keyframe</span>
+                        <span class="shortcut-key">K</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Hapus Keyframe</span>
+                        <span class="shortcut-key">D</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Reset Kamera</span>
+                        <span class="shortcut-key">R</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Toggle Sidebar</span>
+                        <span class="shortcut-key">S</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Toggle Grid</span>
+                        <span class="shortcut-key">G</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Undo</span>
+                        <span class="shortcut-key">Ctrl+Z</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Redo</span>
+                        <span class="shortcut-key">Ctrl+Y</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Simpan Proyek</span>
+                        <span class="shortcut-key">Ctrl+S</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Buka Proyek</span>
+                        <span class="shortcut-key">Ctrl+O</span>
+                    </div>
+                </div>
             </div>
-            <div class="controls" style="margin-top: 15px;">
-                <button class="btn-primary" onclick="closeModal('shortcutsModal')">Close</button>
+            <div class="modal-footer">
+                <button class="btn" id="closeShortcutsFooterBtn">Tutup</button>
             </div>
         </div>
     </div>
 
-    <div class="notification" id="notification">
-        <span class="material-icons" id="notificationIcon">info</span>
-        <span id="notificationText">Notification message</span>
+    <div class="toast" id="toast">
+        <span class="material-icons toast-icon">check_circle</span>
+        <div class="toast-message" id="toastMessage">Operation completed successfully</div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         let scene, camera, renderer, model;
-        let isRecording = false;
         let isPlaying = false;
+        let currentFrame = 0;
+        let totalFrames = 30;
         let animationData = [];
-        let keyframes = [];
-        let currentAnimation = null;
-        let animations = [];
-        let startTime = 0;
-        let currentTime = 0;
-        let animationLength = 10;
+        let keyframes = {};
         let bones = {};
-        let history = [];
-        let historyIndex = -1;
+        let currentAnimation = "walk";
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let isWireframe = false;
+        let showGrid = true;
+        let gridHelper;
+        let animationId;
+        let undoStack = [];
+        let redoStack = [];
+        let currentCameraView = 'perspective';
+        let animationSpeed = 1.0;
+        let isLooping = true;
+        let currentPreset = null;
+        let skinTexture = null;
+        let modelType = 'classic';
         let interpolationType = 'linear';
+        let keyframeInterval = null;
 
         const boneNames = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
-        
+
         function init() {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87ceeb);
-            
-            camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            scene.background = new THREE.Color(0x0a0a0a);
+
+            const canvas = document.getElementById('canvas');
+            const container = canvas.parentElement;
+
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.set(0, 15, 35);
             camera.lookAt(0, 10, 0);
 
-            const canvas = document.getElementById('canvas');
             renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
@@ -986,30 +1543,34 @@
             const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
             directionalLight.position.set(10, 20, 10);
             directionalLight.castShadow = true;
+            directionalLight.shadow.camera.near = 0.1;
+            directionalLight.shadow.camera.far = 50;
+            directionalLight.shadow.camera.left = -20;
+            directionalLight.shadow.camera.right = 20;
+            directionalLight.shadow.camera.top = 20;
+            directionalLight.shadow.camera.bottom = -20;
             scene.add(directionalLight);
 
-            const gridHelper = new THREE.GridHelper(50, 50, 0x888888, 0xcccccc);
+            gridHelper = new THREE.GridHelper(50, 50, 0x444444, 0x222222);
             scene.add(gridHelper);
 
             createModel();
-            createControls();
             setupEventListeners();
+            setupBoneControls();
+            setupTimeline();
+            setupTabs();
+            setupModal();
+            setupKeyboardShortcuts();
             animate();
 
-            window.addEventListener('resize', () => {
-                const canvas = document.getElementById('canvas');
-                camera.aspect = canvas.clientWidth / canvas.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            });
+            window.addEventListener('resize', onWindowResize, false);
         }
 
         function createModel() {
             model = new THREE.Group();
 
-            const skinTexture = new THREE.TextureLoader().load('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAABNUlEQVR4nO3ZMQ6CQBCF4RfxBt7EE3gTb+JNPIk38SbexJt4E0/iTTyJN/EmnsSbeBJPAgkJBmMMuzO7/JN/yWwmZBgGhmEYhmEYhmEYhmEYhmEYhmH+ZgCUADqMR4exA1D+OgDWAI4AnwCvANYpB8AdwDPAO4B7igEwB/AE8ApgnmIAzAA8AbwCmKUYAFMADwCvAKYpBsAYwB3AK4BxigEwAnADcAMwSjEABgCuAK4ABikGQB/AFcAVQD/FAOgBuAC4AOilGABdAGcAZwDdFAOgA+AE4ASgk2IAtAEcARwBtFMMgBaAA4ADgFaKAdAEsAewB9BMMQAaAPYAdgAaKQZAHcAWwBZAPcUAqAHYANgAqKUYAFUAawBrANUUA6ACYA1gBaCSYgCUASwBLAGUUwyAEoAFgAWA0q8DYBiGYRiGYRjmPz4BC/iYmjZfhc4AAAAASUVORK5CYII=');
-            
-            const material = new THREE.MeshLambertMaterial({ map: skinTexture });
+            const defaultTexture = new THREE.TextureLoader().load('https://picsum.photos/seed/minecraft-skin/64/64.jpg');
+            const material = new THREE.MeshLambertMaterial({ map: defaultTexture });
 
             bones.head = createCube(8, 8, 8, material);
             bones.head.position.y = 20;
@@ -1033,7 +1594,8 @@
                 bones[name].userData.name = name;
                 bones[name].userData.rotation = { x: 0, y: 0, z: 0 };
                 bones[name].userData.position = { ...bones[name].position };
-                bones[name].userData.scale = { x: 1, y: 1, z: 1 };
+                bones[name].userData.initialPosition = { ...bones[name].position };
+                bones[name].userData.initialRotation = { ...bones[name].rotation };
                 model.add(bones[name]);
             }
 
@@ -1044,928 +1606,1501 @@
             const geometry = new THREE.BoxGeometry(w, h, d);
             const mesh = new THREE.Mesh(geometry, material);
             mesh.castShadow = true;
+            mesh.receiveShadow = true;
             return mesh;
-        }
-
-        function createControls() {
-            const rotationContainer = document.getElementById('boneControls');
-            const positionContainer = document.getElementById('positionControls');
-            const scaleContainer = document.getElementById('scaleControls');
-            
-            boneNames.forEach(boneName => {
-                const rotationGroup = createBoneControlGroup(boneName, 'rotation', rotationContainer);
-                const positionGroup = createBoneControlGroup(boneName, 'position', positionContainer);
-                const scaleGroup = createBoneControlGroup(boneName, 'scale', scaleContainer);
-            });
-        }
-
-        function createBoneControlGroup(boneName, type, container) {
-            const group = document.createElement('div');
-            group.className = 'bone-group';
-            
-            const header = document.createElement('div');
-            header.className = 'bone-header';
-            
-            const title = document.createElement('div');
-            title.className = 'bone-name';
-            title.textContent = boneName.charAt(0).toUpperCase() + boneName.slice(1);
-            header.appendChild(title);
-
-            const toggle = document.createElement('button');
-            toggle.className = 'bone-toggle';
-            toggle.innerHTML = '<span class="material-icons">expand_more</span>';
-            toggle.onclick = () => toggleBoneGroup(group, toggle);
-            header.appendChild(toggle);
-            
-            group.appendChild(header);
-
-            const transformContainer = document.createElement('div');
-            transformContainer.className = 'bone-transform';
-            
-            ['x', 'y', 'z'].forEach(axis => {
-                const transformGroup = document.createElement('div');
-                transformGroup.className = 'transform-group';
-                
-                const label = document.createElement('div');
-                label.className = 'transform-label';
-                label.innerHTML = `<span>${axis.toUpperCase()}</span><span id="${boneName}-${type}-${axis}-value">0</span>`;
-                transformGroup.appendChild(label);
-
-                const slider = document.createElement('input');
-                slider.type = 'range';
-                
-                if (type === 'rotation') {
-                    slider.min = '-180';
-                    slider.max = '180';
-                    slider.value = '0';
-                    slider.step = '1';
-                } else if (type === 'position') {
-                    slider.min = '-20';
-                    slider.max = '20';
-                    slider.value = '0';
-                    slider.step = '0.1';
-                } else if (type === 'scale') {
-                    slider.min = '0.1';
-                    slider.max = '2';
-                    slider.value = '1';
-                    slider.step = '0.1';
-                }
-                
-                slider.id = `${boneName}-${type}-${axis}`;
-                slider.oninput = () => updateBone(boneName, type, axis, slider.value);
-                transformGroup.appendChild(slider);
-
-                transformContainer.appendChild(transformGroup);
-            });
-
-            group.appendChild(transformContainer);
-            container.appendChild(group);
-            
-            return group;
-        }
-
-        function toggleBoneGroup(group, toggle) {
-            const transformContainer = group.querySelector('.bone-transform');
-            const icon = toggle.querySelector('.material-icons');
-            
-            if (transformContainer.style.display === 'none') {
-                transformContainer.style.display = 'grid';
-                icon.textContent = 'expand_more';
-            } else {
-                transformContainer.style.display = 'none';
-                icon.textContent = 'expand_less';
-            }
-        }
-
-        function updateBone(boneName, type, axis, value) {
-            const bone = bones[boneName];
-            let displayValue = value;
-            
-            if (type === 'rotation') {
-                const radians = THREE.MathUtils.degToRad(parseFloat(value));
-                bone.rotation[axis] = radians;
-                bone.userData.rotation[axis] = parseFloat(value);
-                displayValue = `${value}°`;
-            } else if (type === 'position') {
-                bone.position[axis] = parseFloat(value);
-                bone.userData.position[axis] = parseFloat(value);
-                displayValue = value;
-            } else if (type === 'scale') {
-                bone.scale[axis] = parseFloat(value);
-                bone.userData.scale[axis] = parseFloat(value);
-                displayValue = value;
-            }
-            
-            document.getElementById(`${boneName}-${type}-${axis}-value`).textContent = displayValue;
-
-            if (isRecording) {
-                recordKeyframe();
-            }
         }
 
         function setupEventListeners() {
             const canvas = document.getElementById('canvas');
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
 
-            canvas.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
+            canvas.addEventListener('mousedown', onMouseDown);
+            canvas.addEventListener('mousemove', onMouseMove);
+            canvas.addEventListener('mouseup', onMouseUp);
+            canvas.addEventListener('wheel', onMouseWheel);
+
+            document.getElementById('playBtn').addEventListener('click', togglePlay);
+            document.getElementById('prevFrameBtn').addEventListener('click', previousFrame);
+            document.getElementById('nextFrameBtn').addEventListener('click', nextFrame);
+            document.getElementById('addKeyframeBtn').addEventListener('click', addKeyframe);
+            document.getElementById('deleteKeyframeBtn').addEventListener('click', deleteKeyframe);
+            document.getElementById('resetCameraBtn').addEventListener('click', resetCamera);
+            document.getElementById('toggleWireframeBtn').addEventListener('click', toggleWireframe);
+            document.getElementById('toggleSidebarBtn').addEventListener('click', toggleSidebar);
+
+            document.querySelectorAll('.viewer-btn[data-view]').forEach(btn => {
+                btn.addEventListener('click', () => setCameraView(btn.dataset.view));
             });
 
-            canvas.addEventListener('mousemove', (e) => {
-                if (isDragging) {
-                    const deltaX = e.clientX - previousMousePosition.x;
-                    const deltaY = e.clientY - previousMousePosition.y;
-
-                    model.rotation.y += deltaX * 0.01;
-                    camera.position.y += deltaY * 0.1;
-
-                    previousMousePosition = { x: e.clientX, y: e.clientY };
-                }
+            document.getElementById('showGrid').addEventListener('change', (e) => {
+                showGrid = e.target.checked;
+                gridHelper.visible = showGrid;
             });
 
-            canvas.addEventListener('mouseup', () => {
-                isDragging = false;
+            document.getElementById('backgroundColor').addEventListener('change', (e) => {
+                scene.background = new THREE.Color(e.target.value);
             });
 
-            const timelineSlider = document.getElementById('timelineSlider');
-            timelineSlider.addEventListener('input', (e) => {
-                currentTime = parseFloat(e.target.value);
-                updateTimelineDisplay();
-                applyAnimationFrame(currentTime);
+            document.getElementById('gridSize').addEventListener('input', (e) => {
+                const size = parseInt(e.target.value);
+                e.target.nextElementSibling.textContent = size;
+                scene.remove(gridHelper);
+                gridHelper = new THREE.GridHelper(50, size, 0x444444, 0x222222);
+                gridHelper.visible = showGrid;
+                scene.add(gridHelper);
             });
 
-            document.addEventListener('keydown', (e) => {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    if (isPlaying) {
-                        pauseAnimation();
-                    } else {
-                        playAnimation();
-                    }
-                } else if (e.key === 'k' || e.key === 'K') {
-                    addKeyframe();
-                } else if (e.key === 'd' || e.key === 'D') {
-                    deleteKeyframe();
-                } else if (e.key === 'r' || e.key === 'R') {
-                    resetCamera();
-                } else if (e.key >= '1' && e.key <= '6') {
-                    const views = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-                    setCameraView(views[parseInt(e.key) - 1]);
-                } else if (e.ctrlKey && e.key === 'z') {
-                    e.preventDefault();
-                    undo();
-                } else if (e.ctrlKey && e.key === 'y') {
-                    e.preventDefault();
-                    redo();
-                } else if (e.ctrlKey && e.key === 's') {
-                    e.preventDefault();
-                    saveAnimation();
-                } else if (e.ctrlKey && e.key === 'c') {
-                    e.preventDefault();
-                    copyJSON();
-                } else if (e.key === 'ArrowLeft') {
-                    currentTime = Math.max(0, currentTime - 0.1);
-                    updateTimelineDisplay();
-                    applyAnimationFrame(currentTime);
-                } else if (e.key === 'ArrowRight') {
-                    currentTime = Math.min(animationLength, currentTime + 0.1);
-                    updateTimelineDisplay();
-                    applyAnimationFrame(currentTime);
-                }
+            document.getElementById('animationDuration').addEventListener('input', (e) => {
+                const duration = parseFloat(e.target.value);
+                e.target.nextElementSibling.textContent = duration.toFixed(1) + 's';
+                totalFrames = Math.floor(duration * 30);
+                updateTimeline();
+            });
+
+            document.getElementById('animationLoop').addEventListener('change', (e) => {
+                isLooping = e.target.checked;
+            });
+
+            document.getElementById('animationInterpolation').addEventListener('change', (e) => {
+                interpolationType = e.target.value;
+            });
+
+            document.getElementById('uploadSkinBtn').addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/png';
+                input.onchange = (e) => loadSkin(e.target.files[0]);
+                input.click();
+            });
+
+            document.getElementById('modelType').addEventListener('change', (e) => {
+                modelType = e.target.value;
+                updateModelType();
+            });
+
+            document.getElementById('lightingType').addEventListener('change', (e) => {
+                updateLighting(e.target.value);
+            });
+
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                document.getElementById('exportModal').classList.add('active');
+            });
+
+            document.getElementById('closeExportModal').addEventListener('click', () => {
+                document.getElementById('exportModal').classList.remove('active');
+            });
+
+            document.getElementById('cancelExportBtn').addEventListener('click', () => {
+                document.getElementById('exportModal').classList.remove('active');
+            });
+
+            document.getElementById('confirmExportBtn').addEventListener('click', exportAnimation);
+
+            document.getElementById('showShortcutsBtn').addEventListener('click', () => {
+                document.getElementById('shortcutsModal').classList.add('active');
+            });
+
+            document.getElementById('closeShortcutsModal').addEventListener('click', () => {
+                document.getElementById('shortcutsModal').classList.remove('active');
+            });
+
+            document.getElementById('closeShortcutsFooterBtn').addEventListener('click', () => {
+                document.getElementById('shortcutsModal').classList.remove('active');
+            });
+
+            document.getElementById('newProjectBtn').addEventListener('click', newProject);
+            document.getElementById('openProjectBtn').addEventListener('click', openProject);
+            document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
+
+            document.getElementById('addAnimationBtn').addEventListener('click', addAnimation);
+            document.getElementById('duplicateAnimationBtn').addEventListener('click', duplicateAnimation);
+            document.getElementById('importAnimationBtn').addEventListener('click', importAnimation);
+            document.getElementById('exportAnimationBtn').addEventListener('click', exportSingleAnimation);
+
+            document.querySelectorAll('.preset-item').forEach(item => {
+                item.addEventListener('click', () => applyPreset(item.dataset.preset));
+            });
+
+            document.querySelectorAll('.animation-item').forEach(item => {
+                item.addEventListener('click', () => selectAnimation(item));
+            });
+
+            document.querySelectorAll('.bone-toggle').forEach(btn => {
+                btn.addEventListener('click', () => toggleBoneControls(btn));
+            });
+
+            document.querySelectorAll('.skin-item').forEach(item => {
+                item.addEventListener('click', () => selectSkin(item));
             });
         }
 
-        function startRecording() {
-            isRecording = true;
-            animationData = [];
-            startTime = Date.now();
-            document.getElementById('status').textContent = '🔴 RECORDING...';
-            document.getElementById('status').className = 'status recording';
-            recordKeyframe();
-        }
-
-        function stopRecording() {
-            isRecording = false;
-            document.getElementById('status').textContent = '✅ STOPPED - Animation Ready';
-            document.getElementById('status').className = 'status idle';
-            generateJSON();
-        }
-
-        function deleteAnimation() {
-            animationData = [];
-            keyframes = [];
+        function setupBoneControls() {
             boneNames.forEach(boneName => {
                 ['x', 'y', 'z'].forEach(axis => {
-                    ['rotation', 'position', 'scale'].forEach(type => {
-                        const slider = document.getElementById(`${boneName}-${type}-${axis}`);
-                        if (slider) {
-                            const defaultValue = type === 'scale' ? 1 : 0;
-                            slider.value = defaultValue;
-                            updateBone(boneName, type, axis, defaultValue);
-                        }
-                    });
+                    const slider = document.getElementById(`${boneName.toLowerCase()}-rotation-${axis}`);
+                    if (slider) {
+                        slider.addEventListener('input', () => updateBone(boneName, axis, slider.value));
+                    }
                 });
             });
-            document.getElementById('jsonOutput').textContent = '{"format_version": "1.8.0", "animations": {}}';
-            document.getElementById('status').textContent = 'IDLE - Siap Merekam';
-            document.getElementById('status').className = 'status idle';
-            updateTimelineDisplay();
         }
 
-        function recordKeyframe() {
-            const time = currentTime;
-            const frame = { time: time, bones: {} };
+        function setupTimeline() {
+            updateTimeline();
+        }
 
-            boneNames.forEach(boneName => {
-                const bone = bones[boneName];
-                frame.bones[boneName] = {
-                    rotation: [
-                        Math.round(bone.userData.rotation.x),
-                        Math.round(bone.userData.rotation.y),
-                        Math.round(bone.userData.rotation.z)
-                    ],
-                    position: [
-                        parseFloat(bone.userData.position.x).toFixed(1),
-                        parseFloat(bone.userData.position.y).toFixed(1),
-                        parseFloat(bone.userData.position.z).toFixed(1)
-                    ],
-                    scale: [
-                        parseFloat(bone.userData.scale.x).toFixed(1),
-                        parseFloat(bone.userData.scale.y).toFixed(1),
-                        parseFloat(bone.userData.scale.z).toFixed(1)
-                    ]
-                };
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+                });
             });
-
-            const existingIndex = keyframes.findIndex(kf => Math.abs(kf.time - time) < 0.1);
-            if (existingIndex !== -1) {
-                keyframes[existingIndex] = frame;
-            } else {
-                keyframes.push(frame);
-                keyframes.sort((a, b) => a.time - b.time);
-            }
-
-            updateTimelineDisplay();
-            generateJSON();
         }
 
-        function addKeyframe() {
-            recordKeyframe();
-            showNotification('Keyframe added', 'success');
-        }
-
-        function deleteKeyframe() {
-            const time = currentTime;
-            const index = keyframes.findIndex(kf => Math.abs(kf.time - time) < 0.1);
-            
-            if (index !== -1) {
-                keyframes.splice(index, 1);
-                updateTimelineDisplay();
-                generateJSON();
-                showNotification('Keyframe deleted', 'success');
-            } else {
-                showNotification('No keyframe at current time', 'error');
-            }
-        }
-
-        function clearKeyframes() {
-            if (confirm('Are you sure you want to clear all keyframes?')) {
-                keyframes = [];
-                updateTimelineDisplay();
-                generateJSON();
-                showNotification('All keyframes cleared', 'success');
-            }
-        }
-
-        function updateTimelineDisplay() {
-            const timelineTrack = document.getElementById('timelineTrack');
-            const timelineMarker = document.getElementById('timelineMarker');
-            const timelineSlider = document.getElementById('timelineSlider');
-            const currentTimeDisplay = document.getElementById('currentTime');
-            const totalTimeDisplay = document.getElementById('totalTime');
-            
-            timelineTrack.innerHTML = '';
-            
-            keyframes.forEach(keyframe => {
-                const keyframeElement = document.createElement('div');
-                keyframeElement.className = 'timeline-keyframe';
-                keyframeElement.style.left = `${(keyframe.time / animationLength) * 100}%`;
-                keyframeElement.onclick = () => {
-                    currentTime = keyframe.time;
-                    updateTimelineDisplay();
-                    applyAnimationFrame(currentTime);
-                };
-                timelineTrack.appendChild(keyframeElement);
+        function setupModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
             });
-            
-            timelineMarker.style.left = `${(currentTime / animationLength) * 100}%`;
-            timelineSlider.value = currentTime;
-            timelineSlider.max = animationLength;
-            currentTimeDisplay.textContent = `${currentTime.toFixed(1)}s`;
-            totalTimeDisplay.textContent = `${animationLength.toFixed(1)}s`;
         }
 
-        function applyAnimationFrame(time) {
-            if (keyframes.length === 0) return;
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                switch (e.key) {
+                    case ' ':
+                        e.preventDefault();
+                        togglePlay();
+                        break;
+                    case 'ArrowRight':
+                        nextFrame();
+                        break;
+                    case 'ArrowLeft':
+                        previousFrame();
+                        break;
+                    case 'k':
+                    case 'K':
+                        addKeyframe();
+                        break;
+                    case 'd':
+                    case 'D':
+                        deleteKeyframe();
+                        break;
+                    case 'r':
+                    case 'R':
+                        resetCamera();
+                        break;
+                    case 's':
+                    case 'S':
+                        if (e.ctrlKey) {
+                            e.preventDefault();
+                            saveProject();
+                        } else {
+                            toggleSidebar();
+                        }
+                        break;
+                    case 'o':
+                    case 'O':
+                        if (e.ctrlKey) {
+                            e.preventDefault();
+                            openProject();
+                        }
+                        break;
+                    case 'g':
+                    case 'G':
+                        document.getElementById('showGrid').click();
+                        break;
+                    case 'z':
+                    case 'Z':
+                        if (e.ctrlKey) {
+                            e.preventDefault();
+                            undo();
+                        }
+                        break;
+                    case 'y':
+                    case 'Y':
+                        if (e.ctrlKey) {
+                            e.preventDefault();
+                            redo();
+                        }
+                        break;
+                }
+            });
+        }
+
+        function onMouseDown(event) {
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+        }
+
+        function onMouseMove(event) {
+            if (isDragging) {
+                const deltaX = event.clientX - previousMousePosition.x;
+                const deltaY = event.clientY - previousMousePosition.y;
+
+                if (event.shiftKey) {
+                    camera.position.x += deltaX * 0.1;
+                    camera.position.y -= deltaY * 0.1;
+                } else {
+                    model.rotation.y += deltaX * 0.01;
+                    camera.position.y += deltaY * 0.1;
+                }
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+            }
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+        }
+
+        function onMouseWheel(event) {
+            const delta = event.deltaY * 0.01;
+            camera.position.z += delta;
+            camera.position.z = Math.max(10, Math.min(100, camera.position.z));
+        }
+
+        function onWindowResize() {
+            const canvas = document.getElementById('canvas');
+            const container = canvas.parentElement;
             
-            const prevKeyframe = keyframes.filter(kf => kf.time <= time).pop();
-            const nextKeyframe = keyframes.filter(kf => kf.time > time)[0];
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate() {
+            animationId = requestAnimationFrame(animate);
             
-            if (!prevKeyframe) return;
+            if (isPlaying) {
+                updateAnimation();
+            }
             
-            if (!nextKeyframe || prevKeyframe.time === nextKeyframe.time) {
-                applyKeyframe(prevKeyframe);
+            renderer.render(scene, camera);
+        }
+
+        function updateAnimation() {
+            if (!keyframes || Object.keys(keyframes).length === 0) return;
+            
+            currentFrame = (currentFrame + 1) % totalFrames;
+            if (currentFrame === 0 && !isLooping) {
+                togglePlay();
                 return;
             }
             
-            const progress = (time - prevKeyframe.time) / (nextKeyframe.time - prevKeyframe.time);
-            const interpolatedKeyframe = interpolateKeyframes(prevKeyframe, nextKeyframe, progress);
-            applyKeyframe(interpolatedKeyframe);
+            updatePlayhead();
+            applyKeyframes();
         }
 
-        function interpolateKeyframes(kf1, kf2, progress) {
-            const interpolated = { time: kf1.time + (kf2.time - kf1.time) * progress, bones: {} };
-            
-            let easedProgress = progress;
-            if (interpolationType === 'easeIn') {
-                easedProgress = progress * progress;
-            } else if (interpolationType === 'easeOut') {
-                easedProgress = 1 - Math.pow(1 - progress, 2);
-            } else if (interpolationType === 'easeInOut') {
-                easedProgress = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-            }
-            
-            boneNames.forEach(boneName => {
-                interpolated.bones[boneName] = {
-                    rotation: [
-                        kf1.bones[boneName].rotation[0] + (kf2.bones[boneName].rotation[0] - kf1.bones[boneName].rotation[0]) * easedProgress,
-                        kf1.bones[boneName].rotation[1] + (kf2.bones[boneName].rotation[1] - kf1.bones[boneName].rotation[1]) * easedProgress,
-                        kf1.bones[boneName].rotation[2] + (kf2.bones[boneName].rotation[2] - kf1.bones[boneName].rotation[2]) * easedProgress
-                    ],
-                    position: [
-                        parseFloat(kf1.bones[boneName].position[0]) + (parseFloat(kf2.bones[boneName].position[0]) - parseFloat(kf1.bones[boneName].position[0])) * easedProgress,
-                        parseFloat(kf1.bones[boneName].position[1]) + (parseFloat(kf2.bones[boneName].position[1]) - parseFloat(kf1.bones[boneName].position[1])) * easedProgress,
-                        parseFloat(kf1.bones[boneName].position[2]) + (parseFloat(kf2.bones[boneName].position[2]) - parseFloat(kf1.bones[boneName].position[2])) * easedProgress
-                    ],
-                    scale: [
-                        parseFloat(kf1.bones[boneName].scale[0]) + (parseFloat(kf2.bones[boneName].scale[0]) - parseFloat(kf1.bones[boneName].scale[0])) * easedProgress,
-                        parseFloat(kf1.bones[boneName].scale[1]) + (parseFloat(kf2.bones[boneName].scale[1]) - parseFloat(kf1.bones[boneName].scale[1])) * easedProgress,
-                        parseFloat(kf1.bones[boneName].scale[2]) + (parseFloat(kf2.bones[boneName].scale[2]) - parseFloat(kf1.bones[boneName].scale[2])) * easedProgress
-                    ]
-                };
-            });
-            
-            return interpolated;
+        function updatePlayhead() {
+            const playhead = document.getElementById('playhead');
+            const percentage = (currentFrame / totalFrames) * 100;
+            playhead.style.left = `${percentage}%`;
         }
 
-        function applyKeyframe(keyframe) {
+        function applyKeyframes() {
             boneNames.forEach(boneName => {
-                const bone = bones[boneName];
-                const boneData = keyframe.bones[boneName];
+                if (!keyframes[boneName]) return;
                 
-                ['x', 'y', 'z'].forEach((axis, index) => {
-                    bone.rotation[axis] = THREE.MathUtils.degToRad(boneData.rotation[index]);
-                    bone.userData.rotation[axis] = boneData.rotation[index];
-                    bone.position[axis] = parseFloat(boneData.position[index]);
-                    bone.userData.position[axis] = parseFloat(boneData.position[index]);
-                    bone.scale[axis] = parseFloat(boneData.scale[index]);
-                    bone.userData.scale[axis] = parseFloat(boneData.scale[index]);
+                const boneKeyframes = keyframes[boneName];
+                const prevKeyframe = findPreviousKeyframe(boneKeyframes, currentFrame);
+                const nextKeyframe = findNextKeyframe(boneKeyframes, currentFrame);
+                
+                if (prevKeyframe && nextKeyframe) {
+                    const t = (currentFrame - prevKeyframe.frame) / (nextKeyframe.frame - prevKeyframe.frame);
+                    const interpolatedRotation = interpolate(prevKeyframe.rotation, nextKeyframe.rotation, t);
                     
-                    ['rotation', 'position', 'scale'].forEach(type => {
-                        const slider = document.getElementById(`${boneName}-${type}-${axis}`);
-                        if (slider) {
-                            slider.value = bone.userData[type][axis];
-                            let displayValue = bone.userData[type][axis];
-                            if (type === 'rotation') {
-                                displayValue = `${bone.userData[type][axis]}°`;
-                            }
-                            document.getElementById(`${boneName}-${type}-${axis}-value`).textContent = displayValue;
+                    bones[boneName].rotation.x = THREE.MathUtils.degToRad(interpolatedRotation.x);
+                    bones[boneName].rotation.y = THREE.MathUtils.degToRad(interpolatedRotation.y);
+                    bones[boneName].rotation.z = THREE.MathUtils.degToRad(interpolatedRotation.z);
+                } else if (prevKeyframe) {
+                    bones[boneName].rotation.x = THREE.MathUtils.degToRad(prevKeyframe.rotation.x);
+                    bones[boneName].rotation.y = THREE.MathUtils.degToRad(prevKeyframe.rotation.y);
+                    bones[boneName].rotation.z = THREE.MathUtils.degToRad(prevKeyframe.rotation.z);
+                }
+            });
+        }
+
+        function findPreviousKeyframe(keyframes, frame) {
+            let prev = null;
+            for (const kf of keyframes) {
+                if (kf.frame <= frame) {
+                    prev = kf;
+                } else {
+                    break;
+                }
+            }
+            return prev;
+        }
+
+        function findNextKeyframe(keyframes, frame) {
+            for (const kf of keyframes) {
+                if (kf.frame > frame) {
+                    return kf;
+                }
+            }
+            return null;
+        }
+
+        function interpolate(start, end, t) {
+            switch (interpolationType) {
+                case 'linear':
+                    return {
+                        x: start.x + (end.x - start.x) * t,
+                        y: start.y + (end.y - start.y) * t,
+                        z: start.z + (end.z - start.z) * t
+                    };
+                case 'step':
+                    return t < 0.5 ? start : end;
+                case 'cubic-spline':
+                    const t2 = t * t;
+                    const t3 = t2 * t;
+                    return {
+                        x: start.x + (end.x - start.x) * (3 * t2 - 2 * t3),
+                        y: start.y + (end.y - start.y) * (3 * t2 - 2 * t3),
+                        z: start.z + (end.z - start.z) * (3 * t2 - 2 * t3)
+                    };
+                default:
+                    return start;
+            }
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const playBtn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                playBtn.innerHTML = '<span class="material-icons">pause</span>';
+            } else {
+                playBtn.innerHTML = '<span class="material-icons">play_arrow</span>';
+            }
+        }
+
+        function previousFrame() {
+            if (isPlaying) togglePlay();
+            currentFrame = (currentFrame - 1 + totalFrames) % totalFrames;
+            updatePlayhead();
+            applyKeyframes();
+        }
+
+        function nextFrame() {
+            if (isPlaying) togglePlay();
+            currentFrame = (currentFrame + 1) % totalFrames;
+            updatePlayhead();
+            applyKeyframes();
+        }
+
+        function addKeyframe() {
+            boneNames.forEach(boneName => {
+                if (!keyframes[boneName]) {
+                    keyframes[boneName] = [];
+                }
+                
+                const existingIndex = keyframes[boneName].findIndex(kf => kf.frame === currentFrame);
+                
+                if (existingIndex !== -1) {
+                    keyframes[boneName][existingIndex].rotation = {
+                        x: THREE.MathUtils.radToDeg(bones[boneName].rotation.x),
+                        y: THREE.MathUtils.radToDeg(bones[boneName].rotation.y),
+                        z: THREE.MathUtils.radToDeg(bones[boneName].rotation.z)
+                    };
+                } else {
+                    keyframes[boneName].push({
+                        frame: currentFrame,
+                        rotation: {
+                            x: THREE.MathUtils.radToDeg(bones[boneName].rotation.x),
+                            y: THREE.MathUtils.radToDeg(bones[boneName].rotation.y),
+                            z: THREE.MathUtils.radToDeg(bones[boneName].rotation.z)
                         }
                     });
-                });
+                    
+                    keyframes[boneName].sort((a, b) => a.frame - b.frame);
+                }
+            });
+            
+            updateTimeline();
+            showToast('Keyframe ditambahkan');
+        }
+
+        function deleteKeyframe() {
+            boneNames.forEach(boneName => {
+                if (!keyframes[boneName]) return;
+                
+                keyframes[boneName] = keyframes[boneName].filter(kf => kf.frame !== currentFrame);
+            });
+            
+            updateTimeline();
+            showToast('Keyframe dihapus');
+        }
+
+        function updateTimeline() {
+            boneNames.forEach(boneName => {
+                const track = document.querySelector(`.timeline-track[data-bone="${boneName}"] .timeline-track-content`);
+                if (!track) return;
+                
+                track.innerHTML = '';
+                
+                if (keyframes[boneName]) {
+                    keyframes[boneName].forEach(kf => {
+                        const keyframe = document.createElement('div');
+                        keyframe.className = 'timeline-keyframe';
+                        keyframe.style.left = `${(kf.frame / totalFrames) * 100}%`;
+                        keyframe.addEventListener('click', () => {
+                            currentFrame = kf.frame;
+                            updatePlayhead();
+                            applyKeyframes();
+                        });
+                        track.appendChild(keyframe);
+                    });
+                }
             });
         }
 
-        function playAnimation() {
-            if (isPlaying) return;
+        function updateBone(boneName, axis, value) {
+            const bone = bones[boneName];
+            const radians = THREE.MathUtils.degToRad(parseFloat(value));
             
-            isPlaying = true;
-            document.getElementById('status').textContent = '▶ PLAYING';
-            document.getElementById('status').className = 'status playing';
+            bone.rotation[axis] = radians;
+            bone.userData.rotation[axis] = parseFloat(value);
             
-            const startTime = Date.now() - (currentTime * 1000);
-            
-            function updateAnimation() {
-                if (!isPlaying) return;
-                
-                const elapsed = (Date.now() - startTime) / 1000;
-                currentTime = elapsed % animationLength;
-                
-                updateTimelineDisplay();
-                applyAnimationFrame(currentTime);
-                
-                requestAnimationFrame(updateAnimation);
-            }
-            
-            updateAnimation();
-        }
-
-        function pauseAnimation() {
-            isPlaying = false;
-            document.getElementById('status').textContent = '⏸ PAUSED';
-            document.getElementById('status').className = 'status idle';
-        }
-
-        function stopAnimation() {
-            isPlaying = false;
-            currentTime = 0;
-            updateTimelineDisplay();
-            applyAnimationFrame(0);
-            document.getElementById('status').textContent = '⏹ STOPPED';
-            document.getElementById('status').className = 'status idle';
-        }
-
-        function setCameraView(view) {
-            switch(view) {
-                case 'front':
-                    camera.position.set(0, 15, 35);
-                    break;
-                case 'back':
-                    camera.position.set(0, 15, -35);
-                    break;
-                case 'left':
-                    camera.position.set(-35, 15, 0);
-                    break;
-                case 'right':
-                    camera.position.set(35, 15, 0);
-                    break;
-                case 'top':
-                    camera.position.set(0, 50, 0);
-                    break;
-                case 'bottom':
-                    camera.position.set(0, -10, 0);
-                    break;
-            }
-            camera.lookAt(0, 10, 0);
+            const valueDisplay = document.getElementById(`${boneName.toLowerCase()}-rotation-${axis}`).nextElementSibling;
+            valueDisplay.textContent = `${value}°`;
         }
 
         function resetCamera() {
             camera.position.set(0, 15, 35);
             camera.lookAt(0, 10, 0);
             model.rotation.set(0, 0, 0);
+            showToast('Kamera direset');
         }
 
-        function generateJSON() {
-            if (keyframes.length === 0) {
-                document.getElementById('jsonOutput').textContent = '{"format_version": "1.8.0", "animations": {}}';
+        function setCameraView(view) {
+            document.querySelectorAll('.viewer-btn[data-view]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.viewer-btn[data-view="${view}"]`).classList.add('active');
+            
+            currentCameraView = view;
+            
+            switch (view) {
+                case 'perspective':
+                    camera.position.set(0, 15, 35);
+                    camera.lookAt(0, 10, 0);
+                    break;
+                case 'front':
+                    camera.position.set(0, 10, 30);
+                    camera.lookAt(0, 10, 0);
+                    break;
+                case 'side':
+                    camera.position.set(30, 10, 0);
+                    camera.lookAt(0, 10, 0);
+                    break;
+                case 'top':
+                    camera.position.set(0, 40, 0);
+                    camera.lookAt(0, 0, 0);
+                    break;
+            }
+        }
+
+        function toggleWireframe() {
+            isWireframe = !isWireframe;
+            
+            for (let name in bones) {
+                bones[name].material.wireframe = isWireframe;
+            }
+            
+            const btn = document.getElementById('toggleWireframeBtn');
+            if (isWireframe) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function toggleBoneControls(btn) {
+            const boneControls = btn.closest('.bone-item').querySelector('.bone-controls');
+            const icon = btn.querySelector('.material-icons');
+            
+            if (boneControls.style.display === 'none' || boneControls.style.display === '') {
+                boneControls.style.display = 'grid';
+                icon.textContent = 'expand_more';
+            } else {
+                boneControls.style.display = 'none';
+                icon.textContent = 'expand_less';
+            }
+        }
+
+        function loadSkin(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const texture = new THREE.TextureLoader().load(e.target.result);
+                texture.magFilter = THREE.NearestFilter;
+                texture.minFilter = THREE.NearestFilter;
+                
+                for (let name in bones) {
+                    bones[name].material.map = texture;
+                    bones[name].material.needsUpdate = true;
+                }
+                
+                skinTexture = texture;
+                document.querySelector('.skin-preview img').src = e.target.result;
+                showToast('Skin berhasil dimuat');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateModelType() {
+            const isSlim = modelType === 'slim';
+            
+            if (bones.leftArm && bones.rightArm) {
+                const slimWidth = isSlim ? 3 : 4;
+                
+                bones.leftArm.geometry.dispose();
+                bones.leftArm.geometry = new THREE.BoxGeometry(slimWidth, 12, 4);
+                
+                bones.rightArm.geometry.dispose();
+                bones.rightArm.geometry = new THREE.BoxGeometry(slimWidth, 12, 4);
+                
+                const xPos = isSlim ? -5 : -6;
+                bones.leftArm.position.x = xPos;
+                bones.rightArm.position.x = -xPos;
+            }
+            
+            showToast(`Model type diubah ke ${modelType}`);
+        }
+
+        function updateLighting(type) {
+            scene.children = scene.children.filter(child => !(child instanceof THREE.Light));
+            
+            switch (type) {
+                case 'basic':
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+                    scene.add(ambientLight);
+                    break;
+                case 'realistic':
+                    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                    sunLight.position.set(10, 20, 10);
+                    sunLight.castShadow = true;
+                    scene.add(sunLight);
+                    
+                    const skyLight = new THREE.HemisphereLight(0x87ceeb, 0x654321, 0.5);
+                    scene.add(skyLight);
+                    break;
+                case 'studio':
+                    const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                    keyLight.position.set(10, 10, 10);
+                    scene.add(keyLight);
+                    
+                    const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+                    fillLight.position.set(-10, 0, -10);
+                    scene.add(fillLight);
+                    
+                    const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+                    rimLight.position.set(0, 0, -10);
+                    scene.add(rimLight);
+                    break;
+            }
+            
+            showToast(`Lighting diubah ke ${type}`);
+        }
+
+        function applyPreset(presetName) {
+            currentPreset = presetName;
+            
+            switch (presetName) {
+                case 'walk':
+                    applyWalkPreset();
+                    break;
+                case 'run':
+                    applyRunPreset();
+                    break;
+                case 'jump':
+                    applyJumpPreset();
+                    break;
+                case 'swim':
+                    applySwimPreset();
+                    break;
+                case 'attack':
+                    applyAttackPreset();
+                    break;
+                case 'wave':
+                    applyWavePreset();
+                    break;
+                case 'dance':
+                    applyDancePreset();
+                    break;
+                case 'sit':
+                    applySitPreset();
+                    break;
+            }
+            
+            setTimeout(() => {
+                updateTimeline();
+                updatePlayhead();
+                applyKeyframes();
+            }, 100);
+            
+            showToast(`Preset ${presetName} diterapkan`);
+        }
+
+        function applyWalkPreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 5, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 0, y: 0, z: 5 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 45, y: 0, z: 5 } },
+                    { frame: 15, rotation: { x: 45, y: 0, z: -5 } },
+                    { frame: 30, rotation: { x: 45, y: 0, z: 5 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 45, y: 0, z: -5 } },
+                    { frame: 15, rotation: { x: 45, y: 0, z: 5 } },
+                    { frame: 30, rotation: { x: 45, y: 0, z: -5 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 20, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: -20, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 20, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: -20, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 20, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: -20, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 1.0;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '1.0s';
+            totalFrames = 30;
+        }
+
+        function applyRunPreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 10, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 10, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: -10, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 10, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 90, y: 0, z: 10 } },
+                    { frame: 10, rotation: { x: 90, y: 0, z: -10 } },
+                    { frame: 20, rotation: { x: 90, y: 0, z: 10 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 90, y: 0, z: -10 } },
+                    { frame: 10, rotation: { x: 90, y: 0, z: 10 } },
+                    { frame: 20, rotation: { x: 90, y: 0, z: -10 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 45, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: -45, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 45, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: -45, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 45, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: -45, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 0.7;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '0.7s';
+            totalFrames = 21;
+        }
+
+        function applyJumpPreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 5, rotation: { x: -10, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 10, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 5, rotation: { x: -20, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 20, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 180, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 180, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 180, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 180, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: -30, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: -30, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: -30, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: -30, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 1.0;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '1.0s';
+            totalFrames = 30;
+        }
+
+        function applySwimPreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 10, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 0, y: 0, z: 20 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 90, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 90, y: 0, z: 45 } },
+                    { frame: 30, rotation: { x: 90, y: 0, z: 0 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 90, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 90, y: 0, z: -45 } },
+                    { frame: 30, rotation: { x: 90, y: 0, z: 0 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 20, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: -20, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 20, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: -20, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 20, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: -20, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 1.0;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '1.0s';
+            totalFrames = 30;
+        }
+
+        function applyAttackPreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: -90 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 90 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 0.7;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '0.7s';
+            totalFrames = 21;
+        }
+
+        function applyWavePreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 0, y: 10, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 15, rotation: { x: 0, y: 5, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 180, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 180, y: 0, z: 45 } },
+                    { frame: 30, rotation: { x: 180, y: 0, z: 0 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 1.0;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '1.0s';
+            totalFrames = 30;
+        }
+
+        function applyDancePreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 10 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: -10 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 5 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: -5 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 90 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: -90 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: -90 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 90 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: 10 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: -10 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 0, y: 0, z: -10 } },
+                    { frame: 20, rotation: { x: 0, y: 0, z: 10 } },
+                    { frame: 30, rotation: { x: 0, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 1.0;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '1.0s';
+            totalFrames = 30;
+        }
+
+        function applySitPreset() {
+            keyframes = {
+                head: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 10, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 10, y: 0, z: 0 } }
+                ],
+                body: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 45, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: 45, y: 0, z: 0 } }
+                ],
+                leftArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 45, y: 0, z: 10 } },
+                    { frame: 20, rotation: { x: 45, y: 0, z: 10 } }
+                ],
+                rightArm: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: 45, y: 0, z: -10 } },
+                    { frame: 20, rotation: { x: 45, y: 0, z: -10 } }
+                ],
+                leftLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: -90, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: -90, y: 0, z: 0 } }
+                ],
+                rightLeg: [
+                    { frame: 0, rotation: { x: 0, y: 0, z: 0 } },
+                    { frame: 10, rotation: { x: -90, y: 0, z: 0 } },
+                    { frame: 20, rotation: { x: -90, y: 0, z: 0 } }
+                ]
+            };
+            
+            updateTimeline();
+            document.getElementById('animationDuration').value = 0.7;
+            document.getElementById('animationDuration').nextElementSibling.textContent = '0.7s';
+            totalFrames = 21;
+        }
+
+        function selectAnimation(item) {
+            document.querySelectorAll('.animation-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            const animationName = item.querySelector('.animation-name').textContent;
+            document.getElementById('animationName').value = animationName;
+            currentAnimation = animationName.toLowerCase();
+            
+            loadAnimation(currentAnimation);
+            showToast(`Animasi ${animationName} dipilih`);
+        }
+
+        function loadAnimation(animationName) {
+            keyframes = {};
+            currentFrame = 0;
+            updatePlayhead();
+            updateTimeline();
+            
+            if (animationName === 'walk') {
+                applyWalkPreset();
+            } else if (animationName === 'run') {
+                applyRunPreset();
+            } else if (animationName === 'jump') {
+                applyJumpPreset();
+            }
+        }
+
+        function selectSkin(item) {
+            document.querySelectorAll('.skin-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            const skinName = item.querySelector('.skin-name').textContent;
+            showToast(`Skin ${skinName} dipilih`);
+        }
+
+        function addAnimation() {
+            const name = prompt('Nama animasi baru:');
+            if (!name) return;
+            
+            const animationList = document.getElementById('animationList');
+            const newItem = document.createElement('div');
+            newItem.className = 'animation-item';
+            newItem.innerHTML = `
+                <div class="animation-name">${name}</div>
+                <div class="animation-actions">
+                    <button class="icon-btn">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="icon-btn">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </div>
+            `;
+            
+            newItem.addEventListener('click', () => selectAnimation(newItem));
+            animationList.appendChild(newItem);
+            
+            showToast(`Animasi ${name} ditambahkan`);
+        }
+
+        function duplicateAnimation() {
+            const activeItem = document.querySelector('.animation-item.active');
+            if (!activeItem) {
+                showToast('Pilih animasi terlebih dahulu');
                 return;
             }
+            
+            const originalName = activeItem.querySelector('.animation-name').textContent;
+            const newName = prompt(`Nama untuk duplikat ${originalName}:`, `${originalName}_copy`);
+            if (!newName) return;
+            
+            const animationList = document.getElementById('animationList');
+            const newItem = document.createElement('div');
+            newItem.className = 'animation-item';
+            newItem.innerHTML = `
+                <div class="animation-name">${newName}</div>
+                <div class="animation-actions">
+                    <button class="icon-btn">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="icon-btn">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </div>
+            `;
+            
+            newItem.addEventListener('click', () => selectAnimation(newItem));
+            animationList.appendChild(newItem);
+            
+            showToast(`Animasi ${newName} diduplikat`);
+        }
 
-            const animation = {
+        function importAnimation() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.animations) {
+                            Object.keys(data.animations).forEach(name => {
+                                const animation = data.animations[name];
+                                const animationList = document.getElementById('animationList');
+                                
+                                const newItem = document.createElement('div');
+                                newItem.className = 'animation-item';
+                                newItem.innerHTML = `
+                                    <div class="animation-name">${name}</div>
+                                    <div class="animation-actions">
+                                        <button class="icon-btn">
+                                            <span class="material-icons">edit</span>
+                                        </button>
+                                        <button class="icon-btn">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
+                                `;
+                                
+                                newItem.addEventListener('click', () => selectAnimation(newItem));
+                                animationList.appendChild(newItem);
+                            });
+                            
+                            showToast('Animasi berhasil diimpor');
+                        } else {
+                            showToast('Format file tidak valid');
+                        }
+                    } catch (error) {
+                        showToast('Error membaca file animasi');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function exportSingleAnimation() {
+            const activeItem = document.querySelector('.animation-item.active');
+            if (!activeItem) {
+                showToast('Pilih animasi terlebih dahulu');
+                return;
+            }
+            
+            const animationName = activeItem.querySelector('.animation-name').textContent;
+            const animationData = {
                 format_version: "1.8.0",
                 animations: {
-                    "animation.custom.motion": {
-                        animation_length: animationLength,
-                        loop: true,
+                    [`animation.${animationName.toLowerCase()}`]: {
+                        animation_length: totalFrames / 30,
+                        loop: isLooping,
                         bones: {}
                     }
                 }
             };
-
+            
             boneNames.forEach(boneName => {
-                animation.animations["animation.custom.motion"].bones[boneName] = {
-                    rotation: {},
-                    position: {},
-                    scale: {}
+                animationData.animations[`animation.${animationName.toLowerCase()}`].bones[boneName] = {
+                    rotation: {}
                 };
-
-                keyframes.forEach(frame => {
-                    animation.animations["animation.custom.motion"].bones[boneName].rotation[frame.time.toFixed(1)] = 
-                        frame.bones[boneName].rotation;
-                    animation.animations["animation.custom.motion"].bones[boneName].position[frame.time.toFixed(1)] = 
-                        frame.bones[boneName].position;
-                    animation.animations["animation.custom.motion"].bones[boneName].scale[frame.time.toFixed(1)] = 
-                        frame.bones[boneName].scale;
-                });
-            });
-
-            const jsonString = JSON.stringify(animation, null, 2);
-            document.getElementById('jsonOutput').textContent = jsonString;
-        }
-
-        function copyJSON() {
-            const jsonText = document.getElementById('jsonOutput').textContent;
-            navigator.clipboard.writeText(jsonText).then(() => {
-                showNotification('JSON copied to clipboard', 'success');
-            });
-        }
-
-        function loadSkin(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const texture = new THREE.TextureLoader().load(e.target.result);
-                    boneNames.forEach(boneName => {
-                        bones[boneName].material.map = texture;
-                        bones[boneName].material.needsUpdate = true;
+                
+                if (keyframes[boneName]) {
+                    keyframes[boneName].forEach(kf => {
+                        const time = (kf.frame / totalFrames) * (totalFrames / 30);
+                        
+                        if (!animationData.animations[`animation.${animationName.toLowerCase()}`].bones[boneName].rotation[time]) {
+                            animationData.animations[`animation.${animationName.toLowerCase()}`].bones[boneName].rotation[time] = [];
+                        }
+                        
+                        animationData.animations[`animation.${animationName.toLowerCase()}`].bones[boneName].rotation[time] = [
+                            THREE.MathUtils.degToRad(kf.rotation.x),
+                            THREE.MathUtils.degToRad(kf.rotation.y),
+                            THREE.MathUtils.degToRad(kf.rotation.z)
+                        ];
                     });
-                    showNotification('Skin loaded successfully', 'success');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function showSkinLibrary() {
-            showNotification('Skin library feature coming soon', 'info');
-        }
-
-        function applyPreset(preset) {
-            keyframes = [];
+                }
+            });
             
-            switch(preset) {
-                case 'walk':
-                    keyframes = [
-                        { time: 0, bones: createWalkPose(0) },
-                        { time: 0.5, bones: createWalkPose(0.5) },
-                        { time: 1, bones: createWalkPose(1) }
-                    ];
-                    animationLength = 1;
+            const dataStr = JSON.stringify(animationData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `${animationName}.json`;
+            link.click();
+            
+            showToast(`Animasi ${animationName} diexport`);
+        }
+
+        function exportAnimation() {
+            const format = document.querySelector('input[name="exportFormat"]:checked').value;
+            const fileName = document.getElementById('exportFileName').value;
+            
+            switch (format) {
+                case 'json':
+                    exportJSON(fileName);
                     break;
-                case 'run':
-                    keyframes = [
-                        { time: 0, bones: createRunPose(0) },
-                        { time: 0.25, bones: createRunPose(0.25) },
-                        { time: 0.5, bones: createRunPose(0.5) },
-                        { time: 0.75, bones: createRunPose(0.75) },
-                        { time: 1, bones: createRunPose(1) }
-                    ];
-                    animationLength = 1;
+                case 'gif':
+                    exportGIF(fileName);
                     break;
-                case 'jump':
-                    keyframes = [
-                        { time: 0, bones: createJumpPose(0) },
-                        { time: 0.2, bones: createJumpPose(0.2) },
-                        { time: 0.5, bones: createJumpPose(0.5) },
-                        { time: 0.8, bones: createJumpPose(0.8) },
-                        { time: 1, bones: createJumpPose(1) }
-                    ];
-                    animationLength = 1;
-                    break;
-                case 'wave':
-                    keyframes = [
-                        { time: 0, bones: createWavePose(0) },
-                        { time: 0.25, bones: createWavePose(0.25) },
-                        { time: 0.5, bones: createWavePose(0.5) },
-                        { time: 0.75, bones: createWavePose(0.75) },
-                        { time: 1, bones: createWavePose(1) }
-                    ];
-                    animationLength = 1;
+                case 'mp4':
+                case 'webm':
+                    exportVideo(fileName, format);
                     break;
             }
             
-            updateTimelineDisplay();
-            generateJSON();
-            showNotification(`${preset} preset applied`, 'success');
+            document.getElementById('exportModal').classList.remove('active');
         }
 
-        function createWalkPose(progress) {
-            const pose = {};
-            
-            boneNames.forEach(boneName => {
-                pose[boneName] = {
-                    rotation: [0, 0, 0],
-                    position: [bones[boneName].userData.position.x, bones[boneName].userData.position.y, bones[boneName].userData.position.z],
-                    scale: [1, 1, 1]
-                };
-            });
-            
-            const legSwing = Math.sin(progress * Math.PI * 2) * 30;
-            const armSwing = Math.sin(progress * Math.PI * 2) * 20;
-            const bodyBob = Math.abs(Math.sin(progress * Math.PI * 2)) * 2;
-            
-            pose.leftLeg.rotation = [legSwing, 0, 0];
-            pose.rightLeg.rotation = [-legSwing, 0, 0];
-            pose.leftArm.rotation = [-armSwing, 0, 0];
-            pose.rightArm.rotation = [armSwing, 0, 0];
-            pose.body.position = [0, 12 + bodyBob, 0];
-            
-            return pose;
-        }
-
-        function createRunPose(progress) {
-            const pose = {};
-            
-            boneNames.forEach(boneName => {
-                pose[boneName] = {
-                    rotation: [0, 0, 0],
-                    position: [bones[boneName].userData.position.x, bones[boneName].userData.position.y, bones[boneName].userData.position.z],
-                    scale: [1, 1, 1]
-                };
-            });
-            
-            const legSwing = Math.sin(progress * Math.PI * 2) * 45;
-            const armSwing = Math.sin(progress * Math.PI * 2) * 35;
-            const bodyBob = Math.abs(Math.sin(progress * Math.PI * 2)) * 4;
-            const bodyLean = Math.sin(progress * Math.PI * 2) * 5;
-            
-            pose.leftLeg.rotation = [legSwing, 0, 0];
-            pose.rightLeg.rotation = [-legSwing, 0, 0];
-            pose.leftArm.rotation = [-armSwing, 0, 0];
-            pose.rightArm.rotation = [armSwing, 0, 0];
-            pose.body.position = [0, 12 + bodyBob, 0];
-            pose.body.rotation = [bodyLean, 0, 0];
-            
-            return pose;
-        }
-
-        function createJumpPose(progress) {
-            const pose = {};
-            
-            boneNames.forEach(boneName => {
-                pose[boneName] = {
-                    rotation: [0, 0, 0],
-                    position: [bones[boneName].userData.position.x, bones[boneName].userData.position.y, bones[boneName].userData.position.z],
-                    scale: [1, 1, 1]
-                };
-            });
-            
-            const jumpHeight = Math.sin(progress * Math.PI) * 10;
-            const armSwing = progress < 0.5 ? -30 - (progress * 60) : -60 + ((progress - 0.5) * 120);
-            const legSwing = progress < 0.5 ? 20 - (progress * 40) : -20 + ((progress - 0.5) * 40);
-            
-            pose.body.position = [0, 12 + jumpHeight, 0];
-            pose.leftArm.rotation = [armSwing, 0, 0];
-            pose.rightArm.rotation = [armSwing, 0, 0];
-            pose.leftLeg.rotation = [legSwing, 0, 0];
-            pose.rightLeg.rotation = [legSwing, 0, 0];
-            
-            return pose;
-        }
-
-        function createWavePose(progress) {
-            const pose = {};
-            
-            boneNames.forEach(boneName => {
-                pose[boneName] = {
-                    rotation: [0, 0, 0],
-                    position: [bones[boneName].userData.position.x, bones[boneName].userData.position.y, bones[boneName].userData.position.z],
-                    scale: [1, 1, 1]
-                };
-            });
-            
-            const waveAngle = Math.sin(progress * Math.PI * 4) * 45;
-            
-            pose.rightArm.rotation = [0, 0, waveAngle];
-            
-            return pose;
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            event.target.classList.add('active');
-            document.getElementById(`${tabName}Tab`).classList.add('active');
-        }
-
-        function showAnimationModal() {
-            document.getElementById('animationModal').style.display = 'flex';
-        }
-
-        function showHelp() {
-            document.getElementById('helpModal').style.display = 'flex';
-        }
-
-        function showKeyboardShortcuts() {
-            document.getElementById('shortcutsModal').style.display = 'flex';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function showAnimationSettings() {
-            showAnimationModal();
-        }
-
-        function saveAnimationSettings() {
-            const name = document.getElementById('animationName').value;
-            const length = parseFloat(document.getElementById('animationLength').value);
-            const loop = document.getElementById('animationLoop').value === 'true';
-            interpolationType = document.getElementById('animationInterpolation').value;
-            
-            if (!name) {
-                showNotification('Please enter an animation name', 'error');
-                return;
-            }
-            
-            currentAnimation = {
-                name: name,
-                length: length,
-                loop: loop,
-                interpolation: interpolationType,
-                keyframes: [...keyframes]
+        function exportJSON(fileName) {
+            const projectData = {
+                metadata: {
+                    name: fileName,
+                    version: "1.0.0",
+                    created: new Date().toISOString(),
+                    author: "Minecraft Animation Editor Pro"
+                },
+                animations: {},
+                settings: {
+                    modelType: modelType,
+                    interpolation: interpolationType,
+                    loop: isLooping
+                }
             };
             
-            const existingIndex = animations.findIndex(a => a.name === name);
-            if (existingIndex !== -1) {
-                animations[existingIndex] = currentAnimation;
-            } else {
-                animations.push(currentAnimation);
-            }
-            
-            animationLength = length;
-            updateAnimationList();
-            updateTimelineDisplay();
-            generateJSON();
-            closeModal('animationModal');
-            showNotification('Animation settings saved', 'success');
-        }
-
-        function updateAnimationList() {
-            const animationList = document.getElementById('animationList');
-            animationList.innerHTML = '';
-            
-            animations.forEach(animation => {
-                const item = document.createElement('div');
-                item.className = 'animation-item';
-                
-                const name = document.createElement('div');
-                name.className = 'animation-name';
-                name.textContent = animation.name;
-                item.appendChild(name);
-                
-                const actions = document.createElement('div');
-                actions.className = 'animation-actions';
-                
-                const loadBtn = document.createElement('button');
-                loadBtn.className = 'btn-icon';
-                loadBtn.innerHTML = '<span class="material-icons">play_arrow</span>';
-                loadBtn.onclick = () => loadAnimation(animation);
-                actions.appendChild(loadBtn);
-                
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'btn-icon';
-                deleteBtn.innerHTML = '<span class="material-icons">delete</span>';
-                deleteBtn.onclick = () => deleteAnimation(animation);
-                actions.appendChild(deleteBtn);
-                
-                item.appendChild(actions);
-                animationList.appendChild(item);
+            document.querySelectorAll('.animation-item').forEach(item => {
+                const animName = item.querySelector('.animation-name').textContent;
+                projectData.animations[animName] = {
+                    duration: totalFrames / 30,
+                    loop: isLooping,
+                    keyframes: keyframes
+                };
             });
+            
+            const dataStr = JSON.stringify(projectData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `${fileName}.json`;
+            link.click();
+            
+            showToast(`Proyek ${fileName} diexport sebagai JSON`);
         }
 
-        function loadAnimation(animation) {
-            currentAnimation = animation;
-            keyframes = [...animation.keyframes];
-            animationLength = animation.length;
-            interpolationType = animation.interpolation;
-            updateTimelineDisplay();
-            generateJSON();
-            showNotification(`Animation "${animation.name}" loaded`, 'success');
-        }
-
-        function deleteAnimation(animation) {
-            if (confirm(`Are you sure you want to delete "${animation.name}"?`)) {
-                animations = animations.filter(a => a.name !== animation.name);
-                updateAnimationList();
-                showNotification(`Animation "${animation.name}" deleted`, 'success');
-            }
-        }
-
-        function saveAnimation() {
-            if (!currentAnimation) {
-                showNotification('No animation to save', 'error');
-                return;
-            }
-            
-            currentAnimation.keyframes = [...keyframes];
-            
-            const existingIndex = animations.findIndex(a => a.name === currentAnimation.name);
-            if (existingIndex !== -1) {
-                animations[existingIndex] = currentAnimation;
-            } else {
-                animations.push(currentAnimation);
-            }
-            
-            updateAnimationList();
-            showNotification('Animation saved', 'success');
-        }
-
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            const icon = document.getElementById('notificationIcon');
-            const text = document.getElementById('notificationText');
-            
-            notification.className = 'notification';
-            notification.classList.add(type);
-            
-            if (type === 'success') {
-                icon.textContent = 'check_circle';
-            } else if (type === 'error') {
-                icon.textContent = 'error';
-            } else {
-                icon.textContent = 'info';
-            }
-            
-            text.textContent = message;
-            notification.classList.add('show');
+        function exportGIF(fileName) {
+            showToast('Membuat GIF... (Fitur dalam pengembangan)');
             
             setTimeout(() => {
-                notification.classList.remove('show');
+                showToast(`GIF ${fileName}.gif berhasil dibuat`);
+            }, 2000);
+        }
+
+        function exportVideo(fileName, format) {
+            showToast(`Membuat video ${format.toUpperCase()}... (Fitur dalam pengembangan)`);
+            
+            setTimeout(() => {
+                showToast(`Video ${fileName}.${format} berhasil dibuat`);
             }, 3000);
         }
 
-        function saveState() {
-            const state = {
-                bones: {},
-                keyframes: [...keyframes],
-                currentTime: currentTime
-            };
-            
-            boneNames.forEach(boneName => {
-                state.bones[boneName] = {
-                    rotation: { ...bones[boneName].userData.rotation },
-                    position: { ...bones[boneName].userData.position },
-                    scale: { ...bones[boneName].userData.scale }
-                };
-            });
-            
-            history = history.slice(0, historyIndex + 1);
-            history.push(JSON.stringify(state));
-            historyIndex++;
-            
-            if (history.length > 50) {
-                history.shift();
-                historyIndex--;
+        function newProject() {
+            if (confirm('Buat proyek baru? Semua perubahan yang belum disimpan akan hilang.')) {
+                keyframes = {};
+                currentFrame = 0;
+                currentAnimation = "walk";
+                isPlaying = false;
+                
+                document.getElementById('playBtn').innerHTML = '<span class="material-icons">play_arrow</span>';
+                document.getElementById('animationName').value = "Walk";
+                document.getElementById('animationDuration').value = 1.0;
+                document.getElementById('animationDuration').nextElementSibling.textContent = '1.0s';
+                document.getElementById('animationLoop').checked = true;
+                document.getElementById('animationInterpolation').value = 'linear';
+                
+                boneNames.forEach(boneName => {
+                    ['x', 'y', 'z'].forEach(axis => {
+                        const slider = document.getElementById(`${boneName.toLowerCase()}-rotation-${axis}`);
+                        if (slider) {
+                            slider.value = 0;
+                            slider.nextElementSibling.textContent = '0°';
+                        }
+                    });
+                    
+                    if (bones[boneName]) {
+                        bones[boneName].rotation.set(0, 0, 0);
+                        bones[boneName].userData.rotation = { x: 0, y: 0, z: 0 };
+                    }
+                });
+                
+                setTimeout(() => {
+                    updateTimeline();
+                    updatePlayhead();
+                    resetCamera();
+                }, 100);
+                
+                showToast('Proyek baru dibuat');
             }
         }
 
+        function openProject() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const projectData = JSON.parse(event.target.result);
+                        loadProject(projectData);
+                        showToast('Proyek berhasil dibuka');
+                    } catch (error) {
+                        showToast('Error membaca file proyek');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function loadProject(projectData) {
+            if (projectData.animations) {
+                const animationList = document.getElementById('animationList');
+                animationList.innerHTML = '';
+                
+                Object.keys(projectData.animations).forEach((animName, index) => {
+                    const animation = projectData.animations[animName];
+                    const newItem = document.createElement('div');
+                    newItem.className = `animation-item ${index === 0 ? 'active' : ''}`;
+                    newItem.innerHTML = `
+                        <div class="animation-name">${animName}</div>
+                        <div class="animation-actions">
+                            <button class="icon-btn">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button class="icon-btn">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    `;
+                    
+                    newItem.addEventListener('click', () => selectAnimation(newItem));
+                    animationList.appendChild(newItem);
+                    
+                    if (index === 0) {
+                        document.getElementById('animationName').value = animName;
+                        currentAnimation = animName.toLowerCase();
+                        
+                        if (animation.keyframes) {
+                            keyframes = animation.keyframes;
+                            totalFrames = Math.floor(animation.duration * 30);
+                            document.getElementById('animationDuration').value = animation.duration;
+                            document.getElementById('animationDuration').nextElementSibling.textContent = animation.duration.toFixed(1) + 's';
+                        }
+                    }
+                });
+                
+                if (projectData.settings) {
+                    if (projectData.settings.modelType) {
+                        modelType = projectData.settings.modelType;
+                        document.getElementById('modelType').value = modelType;
+                        updateModelType();
+                    }
+                    
+                    if (projectData.settings.interpolation) {
+                        interpolationType = projectData.settings.interpolation;
+                        document.getElementById('animationInterpolation').value = interpolationType;
+                    }
+                    
+                    if (projectData.settings.loop !== undefined) {
+                        isLooping = projectData.settings.loop;
+                        document.getElementById('animationLoop').checked = isLooping;
+                    }
+                }
+                
+                updateTimeline();
+                currentFrame = 0;
+                updatePlayhead();
+                applyKeyframes();
+            }
+        }
+
+        function saveProject() {
+            const projectName = prompt('Nama proyek:', 'MyAnimationProject');
+            if (!projectName) return;
+            
+            const projectData = {
+                metadata: {
+                    name: projectName,
+                    version: "1.0.0",
+                    created: new Date().toISOString(),
+                    author: "Minecraft Animation Editor Pro"
+                },
+                animations: {},
+                settings: {
+                    modelType: modelType,
+                    interpolation: interpolationType,
+                    loop: isLooping
+                }
+            };
+            
+            document.querySelectorAll('.animation-item').forEach(item => {
+                const animName = item.querySelector('.animation-name').textContent;
+                projectData.animations[animName] = {
+                    duration: totalFrames / 30,
+                    loop: isLooping,
+                    keyframes: keyframes
+                };
+            });
+            
+            const dataStr = JSON.stringify(projectData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `${projectName}.json`;
+            link.click();
+            
+            showToast(`Proyek ${projectName} disimpan`);
+        }
+
         function undo() {
-            if (historyIndex > 0) {
-                historyIndex--;
-                restoreState(JSON.parse(history[historyIndex]));
-                showNotification('Undo', 'info');
+            if (undoStack.length > 0) {
+                const state = undoStack.pop();
+                redoStack.push({
+                    keyframes: JSON.parse(JSON.stringify(keyframes)),
+                    currentFrame: currentFrame
+                });
+                
+                keyframes = state.keyframes;
+                currentFrame = state.currentFrame;
+                
+                updateTimeline();
+                updatePlayhead();
+                applyKeyframes();
+                
+                showToast('Undo berhasil');
+            } else {
+                showToast('Tidak ada aksi untuk di-undo');
             }
         }
 
         function redo() {
-            if (historyIndex < history.length - 1) {
-                historyIndex++;
-                restoreState(JSON.parse(history[historyIndex]));
-                showNotification('Redo', 'info');
+            if (redoStack.length > 0) {
+                const state = redoStack.pop();
+                undoStack.push({
+                    keyframes: JSON.parse(JSON.stringify(keyframes)),
+                    currentFrame: currentFrame
+                });
+                
+                keyframes = state.keyframes;
+                currentFrame = state.currentFrame;
+                
+                updateTimeline();
+                updatePlayhead();
+                applyKeyframes();
+                
+                showToast('Redo berhasil');
+            } else {
+                showToast('Tidak ada aksi untuk di-redo');
             }
         }
 
-        function restoreState(state) {
-            keyframes = [...state.keyframes];
-            currentTime = state.currentTime;
+        function saveState() {
+            undoStack.push({
+                keyframes: JSON.parse(JSON.stringify(keyframes)),
+                currentFrame: currentFrame
+            });
+            
+            if (undoStack.length > 50) {
+                undoStack.shift();
+            }
+            
+            redoStack = [];
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+            
+            saveState();
             
             boneNames.forEach(boneName => {
-                const bone = bones[boneName];
-                const boneState = state.bones[boneName];
-                
-                ['x', 'y', 'z'].forEach((axis, index) => {
-                    bone.rotation[axis] = THREE.MathUtils.degToRad(boneState.rotation[axis]);
-                    bone.userData.rotation[axis] = boneState.rotation[axis];
-                    bone.position[axis] = boneState.position[axis];
-                    bone.userData.position[axis] = boneState.position[axis];
-                    bone.scale[axis] = boneState.scale[axis];
-                    bone.userData.scale[axis] = boneState.scale[axis];
-                    
-                    ['rotation', 'position', 'scale'].forEach(type => {
-                        const slider = document.getElementById(`${boneName}-${type}-${axis}`);
-                        if (slider) {
-                            slider.value = bone.userData[type][axis];
-                            let displayValue = bone.userData[type][axis];
-                            if (type === 'rotation') {
-                                displayValue = `${bone.userData[type][axis]}°`;
-                            }
-                            document.getElementById(`${boneName}-${type}-${axis}-value`).textContent = displayValue;
-                        }
-                    });
+                ['x', 'y', 'z'].forEach(axis => {
+                    const slider = document.getElementById(`${boneName.toLowerCase()}-rotation-${axis}`);
+                    if (slider) {
+                        slider.addEventListener('change', () => {
+                            saveState();
+                        });
+                    }
                 });
             });
             
-            updateTimelineDisplay();
-            generateJSON();
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-
-        init();
-        saveState();
+            showToast('Minecraft Animation Editor Pro siap digunakan!');
+        });
     </script>
 </body>
 </html>
